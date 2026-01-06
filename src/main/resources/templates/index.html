@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FYEO | Visual Encryption</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --panel-bg: #0f0f0f;
+            --border: #333;
+            --neon-green: #00ff41;
+            --neon-red: #ff3333;
+            --text-main: #e0e0e0;
+            --text-dim: #666;
+            --font-stack: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .console-container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+            padding: 40px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 { margin: 0; letter-spacing: 5px; text-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+        .status-bar { font-size: 0.8rem; color: var(--text-dim); margin-top: 10px; }
+
+        .drop-zone {
+            width: 100%;
+            height: 220px;
+            border: 2px dashed var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background: #0a0a0a;
+            transition: all 0.3s ease;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .drop-zone:hover { border-color: var(--neon-green); background: #111; }
+        
+        .drop-zone.error { border-color: var(--neon-red); background: #1a0505; }
+
+        .drop-zone input[type="file"] {
+            position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+        }
+
+        .drop-text { font-size: 1.1rem; font-weight: bold; }
+        .drop-sub { color: var(--text-dim); font-size: 0.8rem; margin-top: 5px; }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        input[type="password"] {
+            background: #000; border: 1px solid var(--border); color: var(--neon-green);
+            padding: 15px; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;
+        }
+        input[type="password"]:focus { outline: none; border-color: var(--neon-green); }
+
+        button {
+            background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
+            font-family: inherit; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+        }
+        button:hover { background: var(--neon-green); color: black; }
+
+        .btn-chaos { border-color: var(--neon-red); color: var(--neon-red); }
+        .btn-chaos:hover { background: var(--neon-red); color: black; }
+
+        .dashboard {
+            display: none; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;
+            border-top: 1px solid var(--border); padding-top: 20px;
+        }
+
+        .viewport { background: #000; border: 1px solid var(--border); padding: 10px; text-align: center; }
+        .viewport label { display: block; color: var(--text-dim); font-size: 0.75rem; margin-bottom: 10px; }
+        .viewport img { max-width: 100%; max-height: 300px; object-fit: contain; display: block; margin: 0 auto; }
+
+        #downloadBtn {
+            display: none; width: 100%; margin-top: 20px; padding: 15px; text-align: center;
+            background: var(--neon-green); color: #000; text-decoration: none; font-weight: bold; box-sizing: border-box;
+        }
+
+        #consoleLog { margin-top: 15px; font-size: 0.9rem; text-align: center; min-height: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="console-container">
+        <header>
+            <h1>F.Y.E.O</h1>
+            <div class="status-bar">SECURE PIXEL MANIPULATION PROTOCOL</div>
+        </header>
+
+        <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept="image/*" name="file">
+            <div class="drop-text" id="dropLabel">INITIATE UPLOAD</div>
+            <div class="drop-sub" id="dropSub">JPG, PNG ACCEPTED (MAX SIZE: 5MB)</div>
+        </div>
+
+        <div class="controls">
+            <input type="password" id="seedInput" placeholder="ENTER SECRET PASSPHRASE" name="key">
+            <button class="btn-chaos" onclick="executeProtocol('encrypt')">SCRAMBLE</button>
+            <button onclick="executeProtocol('decrypt')">RESTORE</button>
+        </div>
+
+        <div id="consoleLog"></div>
+
+        <div class="dashboard" id="dashboard">
+            <div class="viewport">
+                <label>INPUT STREAM</label>
+                <img id="imgInput" alt="Input">
+            </div>
+            <div class="viewport">
+                <label>OUTPUT STREAM</label>
+                <img id="imgOutput" alt="Output" style="opacity: 0.3">
+            </div>
+        </div>
+
+        <a id="downloadBtn">💾 SAVE IMAGE TO DISK</a>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLES ---
+        let processedBlob = null; // Contains the raw file (if valid)
+        const MAX_SIZE_MB = 5;    // SETTING: Maximum allowed size in MB
+
+        // --- 1. HANDLING THE FILE (NO COMPRESSION, JUST VALIDATION) ---
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const dropZone = document.getElementById('dropZone');
+            const dropLabel = document.getElementById('dropLabel');
+            const dropSub = document.getElementById('dropSub');
+
+            if (!file) return;
+
+            // --- SIZE CHECK ---
+            const fileSizeMB = file.size / (1024 * 1024);
+            
+            console.log(fileSizeMB);
+            
+            console.log(fileSizeMB > MAX_SIZE_MB);
+            if (fileSizeMB > MAX_SIZE_MB) {
+                // ERROR STATE
+                processedBlob = null;
+                dropZone.classList.add('error');
+                dropLabel.textContent = "ERROR: FILE TOO LARGE";
+                dropSub.textContent = "DETECTED: " + fileSizeMB.toFixed(1) + "MB (LIMIT: " + MAX_SIZE_MB + "MB)";
+                log("CRITICAL: FILE EXCEEDS 5MB LIMIT. SYSTEM REJECTED.", "red");
+                
+                // Hide preview if there was one
+                document.getElementById('dashboard').style.display = "none";
+                return;
+            }
+
+            // --- SUCCESS STATE ---
+            dropZone.classList.remove('error');
+            processedBlob = file; // Direct assignment (No compression)
+            
+            // Show Preview
+            document.getElementById('imgInput').src = URL.createObjectURL(file);
+            document.getElementById('dashboard').style.display = "grid";
+            dropLabel.textContent = "> READY: " + file.name;
+            dropSub.textContent = "SIZE: " + fileSizeMB.toFixed(2) + " MB";
+            
+            // Reset Output side
+            document.getElementById('imgOutput').src = "";
+            document.getElementById('downloadBtn').style.display = "none";
+            log("IMAGE BUFFERED. AWAITING COMMAND.", "#00ff41");
+        });
+
+        // --- 2. THE MAIN EXECUTION ---
+        async function executeProtocol(action) {
+            const seedText = document.getElementById('seedInput').value;
+            const logBox = document.getElementById('consoleLog');
+
+            if (!processedBlob) {
+                log("ERROR: NO VALID IMAGE DETECTED.", "red");
+                return;
+            }
+            if (!seedText) {
+                log("ERROR: SECURITY KEY REQUIRED.", "red");
+                return;
+            }
+
+            // Endpoint Selection
+            const endpointUrl = action === 'encrypt' ? '/encrypt' : '/decrypt';
+
+            log("INITIATING " + action.toUpperCase() + " SEQUENCE...", "yellow");
+
+            // String -> Int Hash
+            let numericKey = 0;
+            for (let i = 0; i < seedText.length; i++) {
+                numericKey = ((numericKey << 5) - numericKey) + seedText.charCodeAt(i);
+                numericKey |= 0;
+            }
+
+            // Prepare Data
+            const formData = new FormData();
+            formData.append("file", processedBlob); // Sends RAW file
+            formData.append("key", numericKey);     // Sends Hash Int
+
+            try {
+                const response = await fetch(endpointUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("SERVER REJECTED PACKET");
+
+                const resultBlob = await response.blob();
+                const resultUrl = URL.createObjectURL(resultBlob);
+
+                document.getElementById('imgOutput').src = resultUrl;
+                document.getElementById('imgOutput').style.opacity = "1";
+
+                const dlBtn = document.getElementById('downloadBtn');
+                dlBtn.href = resultUrl;
+                const prefix = action === "encrypt" ? "SCRAMBLED_" : "RESTORED_";
+                dlBtn.download = prefix + "SECURE.png";
+                dlBtn.style.display = "block";
+                dlBtn.textContent = "💾 SAVE " + (action === "encrypt" ? "SCRAMBLED" : "RESTORED") + " IMAGE";
+
+                log("OPERATION SUCCESSFUL.", "#00ff41");
+
+            } catch (error) {
+                console.error(error);
+                log("SYSTEM FAILURE: " + error.message, "red");
+            }
+        }
+
+        function log(msg, color) {
+            const el = document.getElementById('consoleLog');
+            el.textContent = "> " + msg;
+            el.style.color = color || "#e0e0e0";
+        }
+    </script>
+</body>
+</html>
