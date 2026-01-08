@@ -105,12 +105,155 @@
         .viewport label { display: block; color: var(--text-dim); font-size: 0.75rem; margin-bottom: 10px; }
         .viewport img { max-width: 100%; max-height: 300px; object-fit: contain; display: block; margin: 0 auto; }
 
-        #downloadBtn {
-            display: none; width: 100%; margin-top: 20px; padding: 15px; text-align: center;
-            background: var(--neon-green); color: #000; text-decoration: none; font-weight: bold; box-sizing: border-box;
-        }
+       #downloadBtn {
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    text-align: center;
+    background: var(--neon-green);
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    box-sizing: border-box;
+    z-index: 50;
+}
+
 
         #consoleLog { margin-top: 15px; font-size: 0.9rem; text-align: center; min-height: 20px; }
+        
+
+@media (max-width: 1024px) {
+    .console-container {
+        padding: 30px;
+    }
+
+    .controls {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .controls input[type="password"] {
+        grid-column: 1 / -1;
+    }
+}
+
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .console-container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        letter-spacing: 3px;
+    }
+
+    .drop-zone {
+        height: 180px;
+    }
+
+    .controls {
+        grid-template-columns: 1fr;
+    }
+
+    button {
+        padding: 15px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .viewport img {
+        max-height: 220px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+    }
+
+    .drop-text {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .drop-sub {
+        font-size: 0.7rem;
+        text-align: center;
+    }
+
+    input[type="password"] {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    #downloadBtn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    
+}
+
+
+@media (min-width: 1600px) {
+    .console-container {
+        max-width: 1000px;
+    }
+
+    .viewport img {
+        max-height: 380px;
+    }
+}
+        
+       @media (max-width: 768px) {
+    #downloadBtn {
+        position: fixed;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 30px);
+        margin: 0;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 255, 65, 0.35);
+    }
+
+
+    .console-container {
+        padding-bottom: 90px;
+    }
+}
+
+@media (max-width: 768px) {
+
+ 
+    .input-only {
+        display: none;
+    }
+
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .viewport {
+        padding: 15px;
+    }
+
+    .viewport img {
+        max-height: 65vh;
+    }
+}
+
+        
     </style>
 </head>
 <body>
@@ -123,23 +266,24 @@
 
         <div class="drop-zone" id="dropZone">
             <input type="file" id="fileInput" accept="image/*" name="file">
-            <div class="drop-text" id="dropLabel">INITIATE UPLOAD</div>
+            <div class="drop-text" id="dropLabel">Upload Image</div>
             <div class="drop-sub" id="dropSub">JPG, PNG ACCEPTED (MAX SIZE: 5MB)</div>
         </div>
 
         <div class="controls">
             <input type="password" id="seedInput" placeholder="ENTER SECRET PASSPHRASE" name="key">
-            <button class="btn-chaos" onclick="executeProtocol('encrypt')">SCRAMBLE</button>
+            <button class="btn-chaos" onclick="executeProtocol('encrypt')">HIDE</button>
             <button onclick="executeProtocol('decrypt')">RESTORE</button>
         </div>
 
         <div id="consoleLog"></div>
 
         <div class="dashboard" id="dashboard">
-            <div class="viewport">
-                <label>INPUT STREAM</label>
-                <img id="imgInput" alt="Input">
-            </div>
+            <div class="viewport input-only">
+    			<label>INPUT STREAM</label>
+   				 <img id="imgInput" alt="Input">
+			</div>
+
             <div class="viewport">
                 <label>OUTPUT STREAM</label>
                 <img id="imgOutput" alt="Output" style="opacity: 0.3">
@@ -150,11 +294,10 @@
     </div>
 
     <script>
-        // --- GLOBAL VARIABLES ---
-        let processedBlob = null; // Contains the raw file (if valid)
-        const MAX_SIZE_MB = 5;    // SETTING: Maximum allowed size in MB
-
-        // --- 1. HANDLING THE FILE (NO COMPRESSION, JUST VALIDATION) ---
+        
+        let processedBlob = null; 
+        const MAX_SIZE_MB = 5;    
+        
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const dropZone = document.getElementById('dropZone');
@@ -163,30 +306,30 @@
 
             if (!file) return;
 
-            // --- SIZE CHECK ---
+            
             const fileSizeMB = file.size / (1024 * 1024);
             
             console.log(fileSizeMB);
             
             console.log(fileSizeMB > MAX_SIZE_MB);
             if (fileSizeMB > MAX_SIZE_MB) {
-                // ERROR STATE
+                
                 processedBlob = null;
                 dropZone.classList.add('error');
                 dropLabel.textContent = "ERROR: FILE TOO LARGE";
                 dropSub.textContent = "DETECTED: " + fileSizeMB.toFixed(1) + "MB (LIMIT: " + MAX_SIZE_MB + "MB)";
                 log("CRITICAL: FILE EXCEEDS 5MB LIMIT. SYSTEM REJECTED.", "red");
                 
-                // Hide preview if there was one
+                
                 document.getElementById('dashboard').style.display = "none";
                 return;
             }
 
-            // --- SUCCESS STATE ---
-            dropZone.classList.remove('error');
-            processedBlob = file; // Direct assignment (No compression)
             
-            // Show Preview
+            dropZone.classList.remove('error');
+            processedBlob = file; 
+            
+            
             document.getElementById('imgInput').src = URL.createObjectURL(file);
             document.getElementById('dashboard').style.display = "grid";
             dropLabel.textContent = "> READY: " + file.name;
@@ -198,7 +341,7 @@
             log("IMAGE BUFFERED. AWAITING COMMAND.", "#00ff41");
         });
 
-        // --- 2. THE MAIN EXECUTION ---
+       
         async function executeProtocol(action) {
             const seedText = document.getElementById('seedInput').value;
             const logBox = document.getElementById('consoleLog');
@@ -212,19 +355,19 @@
                 return;
             }
 
-            // Endpoint Selection
+            
             const endpointUrl = action === 'encrypt' ? '/encrypt' : '/decrypt';
 
             log("INITIATING " + action.toUpperCase() + " SEQUENCE...", "yellow");
 
-            // String -> Int Hash
+            
             let numericKey = 0;
             for (let i = 0; i < seedText.length; i++) {
                 numericKey = ((numericKey << 5) - numericKey) + seedText.charCodeAt(i);
                 numericKey |= 0;
             }
 
-            // Prepare Data
+            
             const formData = new FormData();
             formData.append("file", processedBlob); // Sends RAW file
             formData.append("key", numericKey);     // Sends Hash Int
@@ -235,7 +378,9 @@
                     body: formData
                 });
 
-                if (!response.ok) throw new Error("SERVER REJECTED PACKET");
+                if (!response.ok) {
+					console.log(response.body)
+                }
 
                 const resultBlob = await response.blob();
                 const resultUrl = URL.createObjectURL(resultBlob);
@@ -248,7 +393,7 @@
                 const prefix = action === "encrypt" ? "SCRAMBLED_" : "RESTORED_";
                 dlBtn.download = prefix + "SECURE.png";
                 dlBtn.style.display = "block";
-                dlBtn.textContent = "💾 SAVE " + (action === "encrypt" ? "SCRAMBLED" : "RESTORED") + " IMAGE";
+                dlBtn.textContent = "💾 SAVE " + (action === "encrypt" ? "ENCRYPTED" : "RESTORED") + " IMAGE";
 
                 log("OPERATION SUCCESSFUL.", "#00ff41");
 

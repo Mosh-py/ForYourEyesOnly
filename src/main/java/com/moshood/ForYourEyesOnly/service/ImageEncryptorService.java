@@ -10,16 +10,23 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.moshood.ForYourEyesOnly.Dto.CryptoDto;
 import com.moshood.ForYourEyesOnly.helper.ImageCryptoHelper;
 import com.moshood.ForYourEyesOnly.helper.ImageEncryptor;
+import com.moshood.ForYourEyesOnly.helper.ImageResizerHelper;
 import com.moshood.ForYourEyesOnly.helper.ImageToByteHelper;
 import com.moshood.ForYourEyesOnly.model.ImageBundle;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
+@EnableScheduling
 public class ImageEncryptorService {
 
 	public Optional<byte[]> encryptImage(CryptoDto dto) throws IOException {
@@ -30,19 +37,19 @@ public class ImageEncryptorService {
 		long seed = key + 234000;
 		
 		BufferedImage rawImage = encrypt(file, key, seed);
+	
 		byte[] byteArray = ImageToByteHelper.convertImageToByte(rawImage);
 		return Optional.ofNullable(byteArray);
 	}
 	
 	public BufferedImage encrypt(MultipartFile file, int key, long seed) throws IOException {
 		Optional<BufferedImage> fileToImage = ImageCryptoHelper.convertFileToImage(file);
-		ImageBundle bundleImage = ImageCryptoHelper.createNewImage(fileToImage); 
+		Optional<BufferedImage> resizedImage = ImageResizerHelper.resizeImage(fileToImage);
+		ImageBundle bundleImage = ImageCryptoHelper.createNewImage(resizedImage); 
 		
 		BufferedImage image = diffuseImage(ImageCryptoHelper.confuseImage(bundleImage, key), seed);
 		return image;
 	}
-	
-
 	
 	private BufferedImage diffuseImage(BufferedImage encrypted, long seed) throws IOException {
 		
@@ -67,5 +74,9 @@ public class ImageEncryptorService {
 		
 	}
 	
+	@Scheduled(fixedRate = 10000)
+	public void justDoSomething() {
+		log.info(" JUst logging in one or two ");
+	}
 	
 }
