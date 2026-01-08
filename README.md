@@ -49,4 +49,4 @@ You don't need to install Java or Maven. Just pull the image from Docker Hub and
 docker pull moshpy/fyeo:v1.0.0
 
 # 2. Run the container
-docker run -p 8080:8080 moshPy/fyeo:v1.0.0
+docker run -p 8080:8080 moshpy/fyeo:v1.0.0
