@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Documentation & Internal Design Artifacts ###
+docs/
+.agents/
+.metadata/
+__pycache__/
+*.py
+

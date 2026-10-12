@@ -1,0 +1,37 @@
+{
+  "name": "F.Y.E.O - Zero-Knowledge Visual Encryption",
+  "short_name": "FYEO",
+  "description": "In-Memory Visual Cryptography & Photo Shielding",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "photo",
+          "accept": ["image/png", "image/jpeg", "image/jpg", "image/webp"]
+        }
+      ]
+    }
+  }
+}

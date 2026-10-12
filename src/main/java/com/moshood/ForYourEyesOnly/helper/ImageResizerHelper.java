@@ -8,20 +8,19 @@ public class ImageResizerHelper {
 
 	public static Optional<BufferedImage> resizeImage(Optional<BufferedImage> image ) {
 		
-		int limit = 1024;
+		int limit = 1280;
 		
 		int height = image.get().getHeight();
 		int width = image.get().getWidth();
 		
-		if (height <= limit || width <=limit)
+		if (height <= limit && width <= limit)
 			return image;
 		
 		int max = Math.max(height, width);
+		double scale = (double) limit / max;
 		
-		int scaleRatio = (int) Math.ceil((double) max / limit );
-		
-		int newHeight = height / scaleRatio;
-		int newWidth = width / scaleRatio;
+		int newWidth = Math.max(1, (int) Math.round(width * scale));
+		int newHeight = Math.max(1, (int) Math.round(height * scale));
 		
 		BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = newImage.createGraphics();

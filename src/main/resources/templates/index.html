@@ -3,374 +3,1504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FYEO | Visual Encryption</title>
-    <style>
-        :root {
-            --bg-color: #050505;
-            --panel-bg: #0f0f0f;
-            --border: #333;
-            --neon-green: #00ff41;
-            --neon-red: #ff3333;
-            --text-main: #e0e0e0;
-            --text-dim: #666;
-            --font-stack: 'Courier New', Courier, monospace;
-        }
+    <title>F.Y.E.O | Zero-Knowledge Visual Encryption</title>
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-stack);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+    <meta name="theme-color" content="#0b0f19">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
-        .console-container {
-            width: 100%;
-            max-width: 850px;
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
-            padding: 40px;
-        }
-
-        header {
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        h1 { margin: 0; letter-spacing: 5px; text-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
-        .status-bar { font-size: 0.8rem; color: var(--text-dim); margin-top: 10px; }
-
-        .drop-zone {
-            width: 100%;
-            height: 220px;
-            border: 2px dashed var(--border);
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            background: #0a0a0a;
-            transition: all 0.3s ease;
-            position: relative;
-            box-sizing: border-box;
-        }
-
-        .drop-zone:hover { border-color: var(--neon-green); background: #111; }
-        
-        .drop-zone.error { border-color: var(--neon-red); background: #1a0505; }
-
-        .drop-zone input[type="file"] {
-            position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer;
-        }
-
-        .drop-text { font-size: 1.1rem; font-weight: bold; }
-        .drop-sub { color: var(--text-dim); font-size: 0.8rem; margin-top: 5px; }
-
-        .controls {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        input[type="password"] {
-            background: #000; border: 1px solid var(--border); color: var(--neon-green);
-            padding: 15px; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;
-        }
-        input[type="password"]:focus { outline: none; border-color: var(--neon-green); }
-
-        button {
-            background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
-            font-family: inherit; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s;
-        }
-        button:hover { background: var(--neon-green); color: black; }
-
-        .btn-chaos { border-color: var(--neon-red); color: var(--neon-red); }
-        .btn-chaos:hover { background: var(--neon-red); color: black; }
-
-        .dashboard {
-            display: none; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;
-            border-top: 1px solid var(--border); padding-top: 20px;
-        }
-
-        .viewport { background: #000; border: 1px solid var(--border); padding: 10px; text-align: center; }
-        .viewport label { display: block; color: var(--text-dim); font-size: 0.75rem; margin-bottom: 10px; }
-        .viewport img { max-width: 100%; max-height: 300px; object-fit: contain; display: block; margin: 0 auto; }
-
-       #downloadBtn {
-    display: none;
-    width: 100%;
-    margin-top: 20px;
-    padding: 15px;
-    text-align: center;
-    background: var(--neon-green);
-    color: #000;
-    text-decoration: none;
-    font-weight: bold;
-    box-sizing: border-box;
-    z-index: 50;
-}
-
-
-        #consoleLog { margin-top: 15px; font-size: 0.9rem; text-align: center; min-height: 20px; }
-        
-
-@media (max-width: 1024px) {
-    .console-container {
-        padding: 30px;
-    }
-
-    .controls {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .controls input[type="password"] {
-        grid-column: 1 / -1;
-    }
-}
-
-
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .console-container {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 1.5rem;
-        letter-spacing: 3px;
-    }
-
-    .drop-zone {
-        height: 180px;
-    }
-
-    .controls {
-        grid-template-columns: 1fr;
-    }
-
-    button {
-        padding: 15px;
-    }
-
-    .dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    .viewport img {
-        max-height: 220px;
-    }
-}
-
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.3rem;
-        letter-spacing: 2px;
-    }
-
-    .drop-text {
-        font-size: 1rem;
-        text-align: center;
-    }
-
-    .drop-sub {
-        font-size: 0.7rem;
-        text-align: center;
-    }
-
-    input[type="password"] {
-        padding: 12px;
-        font-size: 0.9rem;
-    }
-
-    #downloadBtn {
-        padding: 12px;
-        font-size: 0.9rem;
-    }
-    
-    
-}
-
-
-@media (min-width: 1600px) {
-    .console-container {
-        max-width: 1000px;
-    }
-
-    .viewport img {
-        max-height: 380px;
-    }
-}
-        
-       @media (max-width: 768px) {
-    #downloadBtn {
-        position: fixed;
-        bottom: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 30px);
-        margin: 0;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 255, 65, 0.35);
-    }
-
-
-    .console-container {
-        padding-bottom: 90px;
-    }
-}
-
-@media (max-width: 768px) {
-
- 
-    .input-only {
-        display: none;
-    }
-
-
-    .dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    .viewport {
-        padding: 15px;
-    }
-
-    .viewport img {
-        max-height: 65vh;
-    }
-}
-
-        
-    </style>
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/fira-code-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" th:href="@{/css/fyeo.css}" href="/css/fyeo.css">
+    <script src="/js/qrcode.min.js"></script>
 </head>
-<body>
+<body data-mode="lock">
 
-    <div class="console-container">
-        <header>
-            <h1>F.Y.E.O</h1>
-            <div class="status-bar">SECURE PIXEL MANIPULATION PROTOCOL</div>
+    <!-- Toast Notification Anchor -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand-badge" id="protocolStatus">
+                <span class="pulse-dot"></span>
+                <span id="protocolStatusText">SYSTEM READY · ENCRYPT MODE</span>
+            </div>
+            <h1 class="app-title">F.Y.E.O</h1>
+            <p class="app-subtitle">Private Visual Encryption & In-Memory Photo Protection</p>
         </header>
 
-        <div class="drop-zone" id="dropZone">
-            <input type="file" id="fileInput" accept="image/*" name="file">
-            <div class="drop-text" id="dropLabel">Upload Image</div>
-            <div class="drop-sub" id="dropSub">JPG, PNG ACCEPTED (MAX SIZE: 5MB)</div>
-        </div>
+        <!-- Main Card Interface -->
+        <main class="main-card">
+            
+            <!-- Top Toolbar for Guide -->
+            <div class="top-toolbar">
+                <button type="button" class="guide-toggle-btn" id="btnToggleManual" aria-expanded="false" aria-controls="manualPanel">
+                    How It Works <span id="manualCaret">▼</span>
+                </button>
+            </div>
 
-        <div class="controls">
-            <input type="password" id="seedInput" placeholder="ENTER SECRET PASSPHRASE" name="key">
-            <button class="btn-chaos" onclick="executeProtocol('encrypt')">HIDE</button>
-            <button onclick="executeProtocol('decrypt')">RESTORE</button>
-        </div>
+            <!-- Expandable Manual Panel -->
+            <section class="manual-panel" id="manualPanel">
+                <div class="manual-header">
+                    <span class="manual-title">Privacy Guide & Instructions</span>
+                    <span class="format-badge">In-Memory Security</span>
+                </div>
+                <div class="manual-grid">
+                    <div class="manual-col">
+                        <h4>Lock Photo (Encrypt)</h4>
+                        <ol>
+                            <li>Select or drop any photo (JPG, PNG, WebP).</li>
+                            <li>Enter a private password.</li>
+                            <li>Click <strong>Encrypt & Protect</strong>.</li>
+                            <li>Save the protected PNG file or copy the 1-click link.</li>
+                            <li>Share via WhatsApp as a <strong>DOCUMENT</strong> to prevent lossy compression.</li>
+                        </ol>
+                    </div>
+                    <div class="manual-col">
+                        <h4>Unlock Photo (Decrypt)</h4>
+                        <ol>
+                            <li>Switch to the <strong>Unlock Image</strong> tab.</li>
+                            <li>Drop the received scrambled PNG photo.</li>
+                            <li>Enter the exact password (or open the 1-click link).</li>
+                            <li>Click <strong>Restore Original</strong>.</li>
+                            <li>Your original photo is restored purely in browser memory.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
 
-        <div id="consoleLog"></div>
+            <!-- Accessible Tabbed Navigation -->
+            <nav class="tab-list" role="tablist" aria-label="Operation Modes">
+                <button 
+                    type="button" 
+                    id="tabLock" 
+                    class="tab-button" 
+                    role="tab" 
+                    aria-selected="true" 
+                    aria-controls="modeContent" 
+                    tabindex="0"
+                    onclick="switchMode('lock')">
+                    <span>Lock Image</span>
+                    <span class="tab-badge">Encrypt</span>
+                </button>
+                <button 
+                    type="button" 
+                    id="tabUnlock" 
+                    class="tab-button" 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="modeContent" 
+                    tabindex="-1"
+                    onclick="switchMode('unlock')">
+                    <span>Unlock Image</span>
+                    <span class="tab-badge">Decrypt</span>
+                </button>
+            </nav>
 
-        <div class="dashboard" id="dashboard">
-            <div class="viewport input-only">
-    			<label>INPUT STREAM</label>
-   				 <img id="imgInput" alt="Input">
-			</div>
+            <!-- Mode Context Banner -->
+            <div class="mode-banner" id="modeBanner">
+                <div class="mode-banner-text">
+                    <span id="modeBannerMsg">Drop a photo to protect its visual content before sharing.</span>
+                </div>
+                <span class="mode-banner-tag" id="modeBannerTag">ENCRYPT MODE</span>
+            </div>
 
-            <div class="viewport">
-                <label>OUTPUT STREAM</label>
-                <img id="imgOutput" alt="Output" style="opacity: 0.3">
+            <!-- Engine Mode Selector (FYEO-005) -->
+            <section class="engine-bar" id="engineBar" aria-label="Cryptographic Execution Engine">
+                <div class="engine-toggle-grid" role="radiogroup" aria-label="Cryptographic Engine Selector">
+                    <button type="button" 
+                            id="btnEngineZk" 
+                            class="engine-option-btn active zk-active" 
+                            role="radio" 
+                            aria-checked="true"
+                            tabindex="0"
+                            onclick="setEngineMode('zk')">
+                        <span>In-Browser (Zero-Knowledge)</span>
+                        <span class="badge-privacy">100% PRIVATE</span>
+                    </button>
+                    <button type="button" 
+                            id="btnEngineCloud" 
+                            class="engine-option-btn" 
+                            role="radio" 
+                            aria-checked="false"
+                            tabindex="-1"
+                            onclick="setEngineMode('cloud')">
+                        <span>Cloud Engine (Server-Side)</span>
+                    </button>
+                </div>
+                <!-- Explanation is supplementary. Expanded by default on desktop,
+                     collapsed below 768px so the upload action leads. -->
+                <details class="engine-details" id="engineDetails" open>
+                    <summary class="engine-summary">How this works</summary>
+                    <div class="engine-bar-header">
+                        <span class="engine-bar-title">Privacy Architecture</span>
+                        <span class="engine-bar-status zk" id="engineStatusBadge">● In-Browser Security Active</span>
+                    </div>
+                    <div class="engine-note" id="engineNote">
+                        <span id="engineNoteText">Zero Network Packets: Your photo never leaves your device. Processed inside an isolated browser worker.</span>
+                    </div>
+                </details>
+            </section>
+
+            <!-- Step 1 Mobile Header -->
+            <button type="button" class="mobile-step-header active" id="stepHeader1" onclick="setMobileStep(1)">
+                <span>1. SELECT PHOTO</span>
+                <span class="step-badge" id="stepBadge1">ACTIVE</span>
+            </button>
+
+            <!-- Mobile-First Drag & Drop Zone -->
+            <section 
+                class="drop-zone state-idle mobile-step-content" 
+                id="dropZone" 
+                tabindex="0" 
+                role="button" 
+                aria-label="Upload file area. Drag and drop image or click to choose from device.">
+                
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    class="file-input-hidden" 
+                    accept="image/png, image/jpeg, image/jpg, image/webp" 
+                    name="file">
+                
+                <!-- Idle State Content -->
+                <div class="zone-idle-content" id="zoneIdle">
+                    <div class="zone-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                    </div>
+                    <div class="zone-title" id="dropTitle">Drop raw photo here or tap to browse</div>
+                    <div class="zone-hint" id="dropHint">High-resolution images will be securely buffered</div>
+                    <div class="zone-trigger-row">
+                        <button type="button" class="btn-camera-trigger" id="btnOpenSecureCamera" title="Capture directly to memory without saving to camera roll">
+                            Take Secret Photo
+                        </button>
+                    </div>
+                    <div class="zone-badges">
+                        <span class="format-badge" id="formatBadge">JPG, PNG</span>
+                        <span class="format-badge" id="sizeBadge">MAX 25MB</span>
+                    </div>
+                </div>
+
+                <!-- Loaded State Card Content -->
+                <div class="zone-loaded-content" id="zoneLoaded">
+                    <div class="preview-thumb-box">
+                        <img id="thumbPreview" class="preview-thumb-img" alt="Thumbnail Preview">
+                    </div>
+                    <div class="file-meta-col">
+                        <span class="file-name-text" id="loadedFileName">image.png</span>
+                        <span class="file-size-badge" id="loadedFileSize">0.0 MB</span>
+                        <span class="file-status-indicator">
+                            <span style="color: var(--mode-accent);">●</span> File validated for processing
+                        </span>
+                    </div>
+                    <button type="button" class="btn-remove-file" id="btnRemoveFile" title="Clear file selection">
+                        ✕ Remove
+                    </button>
+                </div>
+
+                <!-- Processing Scanline State -->
+                <div class="zone-processing-content" id="zoneProcessing">
+                    <div class="scanline-bar"></div>
+                    <div class="processing-text" id="processingText">Scrambling Pixels in Memory...</div>
+                    <div class="processing-progress-wrap" id="processingProgressWrap">
+                        <div class="processing-progress-bar" id="processingProgressBar" style="width: 0%;"></div>
+                    </div>
+                    <div class="processing-subtext" id="processingSubtext">Initializing Web Crypto Worker...</div>
+                </div>
+
+
+                <!-- Dynamic Error Badge inside Zone -->
+                <div class="zone-error-msg" id="zoneErrorMsg"></div>
+            </section>
+
+            <!-- Step 2 Mobile Header -->
+            <button type="button" class="mobile-step-header" id="stepHeader2" onclick="setMobileStep(2)">
+                <span id="stepTitle2">2. CHOOSE KEY / RECIPIENT</span>
+                <span class="step-badge" id="stepBadge2">STEP 2</span>
+            </button>
+
+            <!-- Key Input & Execution Controls -->
+            <section class="controls-card mobile-step-content collapsed" id="controlsCard">
+                <div class="input-group">
+                    <!-- Pre-loaded URL Hash Key Pill (FYEO-009) -->
+                    <div id="preloadedKeyBadge" class="preloaded-key-badge" style="display: none;">
+                        <span class="badge-icon">✓</span>
+                        <span class="badge-text">Secure Key Pre-Loaded from Link</span>
+                        <button type="button" id="btnClearPreloadedKey" class="badge-clear-btn" aria-label="Clear preloaded key" title="Clear key">[Clear]</button>
+                    </div>
+                    <div class="input-label-row">
+                        <label for="seedInput" class="input-label" id="seedInputLabel">Private Encryption Password</label>
+                        <span class="input-hint" id="seedInputHint">Case-sensitive key to lock & unlock</span>
+                    </div>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="seedInput" 
+                            class="secret-input" 
+                            placeholder="Enter your private password or fyeo-pub- key..." 
+                            name="key"
+                            autocomplete="off">
+                        <button type="button" class="toggle-pw-btn" id="btnTogglePassword" aria-label="Show password">
+                            <span id="pwToggleIcon">Show</span>
+                        </button>
+                    </div>
+
+                    <!-- My Device Public Key Card (FYEO-014 Asymmetric Mode) -->
+                    <div id="deviceKeyCard" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; padding: 6px 10px; background: rgba(16, 185, 129, 0.08); border: 1px dashed var(--mode-accent); border-radius: var(--radius-sm); font-size: 11px;">
+                        <span style="color: var(--text-secondary); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            🔑 My Device Handle: <strong id="myPublicKeyDisplay" style="color: var(--mode-accent);">Loading...</strong>
+                        </span>
+                        <button type="button" id="btnCopyMyPublicKey" style="background: transparent; border: 1px solid var(--mode-accent); color: var(--mode-accent); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-action-primary" id="btnExecute">
+                    <span class="spinner-loader" id="executeSpinner"></span>
+                    <span class="btn-text-label" id="btnExecuteText">Encrypt & Protect</span>
+                </button>
+            </section>
+
+            <!-- Step 3 Mobile Header -->
+            <button type="button" class="mobile-step-header" id="stepHeader3" style="display: none;" onclick="setMobileStep(3)">
+                <span id="stepTitle3">3. OUTPUT & SHARE</span>
+                <span class="step-badge" id="stepBadge3">READY</span>
+            </button>
+
+            <!-- Results & Interactive Comparison Dashboard -->
+            <section class="results-dashboard mobile-step-content collapsed" id="resultsDashboard">
+                <div class="results-header">
+                    <div class="results-title-group">
+                        <span class="results-badge" id="resultsBadge">✓ ENCRYPTED</span>
+                        <h3 class="results-title" id="resultsTitle">High-Entropy Pixel Displacement Complete</h3>
+                    </div>
+
+                    <!-- Ephemeral Decrypt Shield & Burn Controls (DEV-116) -->
+                    <div class="ephemeral-shield-bar" id="ephemeralShieldBar">
+                        <div class="shield-indicator" id="shieldIndicator" title="Tab-Switch Shoulder Surfing Shield Active">
+                            <span class="shield-pulse-dot"></span>
+                            <span class="shield-label">Decrypt Shield Active</span>
+                        </div>
+                        <div class="burn-timer-group">
+                            <label for="burnTimerSelect" class="burn-timer-label">Auto-Burn:</label>
+                            <select id="burnTimerSelect" class="burn-timer-select" aria-label="Auto-Burn Timer">
+                                <option value="0">Off (Manual)</option>
+                                <option value="30">30s Self-Destruct</option>
+                                <option value="60">60s Self-Destruct</option>
+                            </select>
+                            <span class="burn-countdown-badge" id="burnCountdownBadge" style="display: none;">🔥 30s</span>
+                        </div>
+                        <button type="button" class="btn-burn-now" id="btnBurnNow" title="Burn media immediately and zeroize memory">
+                            🔥 Burn Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile View Toggle -->
+                <div class="mobile-view-tabs" id="mobileViewTabs">
+                    <button type="button" class="mobile-view-tab active" onclick="setMobileView('split')">Split View</button>
+                    <button type="button" class="mobile-view-tab" onclick="setMobileView('input')">Input</button>
+                    <button type="button" class="mobile-view-tab" onclick="setMobileView('output')">Result</button>
+                </div>
+
+                <!-- Image Viewport Comparison Grid -->
+                <div class="viewport-grid">
+                    <div class="viewport-card" id="cardViewportInput">
+                        <div class="viewport-card-header">
+                            <span class="viewport-label" id="lblInputViewport">INPUT: RAW SOURCE</span>
+                            <span class="viewport-tag">BEFORE</span>
+                        </div>
+                        <div class="viewport-image-wrapper">
+                            <img id="imgInput" alt="Source Stream Preview">
+                        </div>
+                    </div>
+
+                    <div class="viewport-card" id="cardViewportOutput">
+                        <div class="viewport-card-header">
+                            <span class="viewport-label" id="lblOutputViewport">OUTPUT: SCRAMBLED CIPHER</span>
+                            <span class="viewport-tag" id="tagOutputEntropy">HIGH ENTROPY</span>
+                        </div>
+                        <div class="viewport-image-wrapper">
+                            <img id="imgOutput" alt="Output Stream Result">
+                            <!-- Privacy Shield Blur Overlay (DEV-116) -->
+                            <div class="shield-blur-overlay" id="shieldBlurOverlay">
+                                <div class="shield-blur-card">
+                                    <span class="shield-blur-icon">🔒</span>
+                                    <h4 class="shield-blur-title">Display Protected</h4>
+                                    <p class="shield-blur-desc">Tab was inactive or obscured to prevent shoulder surfing.</p>
+                                    <button type="button" class="btn-shield-reveal" id="btnShieldReveal">👁️ Tap to Reveal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="results-actions-grid">
+                    <a id="btnDownload" class="btn-action-sec btn-download-highlight" download="FYEO_SCRAMBLED.png">
+                        Download Output PNG
+                    </a>
+                    <button type="button" class="btn-action-sec" id="btnClipboard">
+                        Copy to Clipboard
+                    </button>
+                    <button type="button" class="btn-action-sec" id="btnResetAll">
+                        New Image
+                    </button>
+
+                    <button type="button" class="btn-action-sec" id="btnOpenQrDirect" style="border-color: var(--mode-accent); color: var(--mode-accent);">
+                        📱 Show Air-Gapped QR Key
+                    </button>
+                    <!-- Extra Quick-Launch WhatsApp Guide Trigger for Lock Mode -->
+                    <button type="button" class="btn-guide-pill" id="btnReopenWhatsAppGuide">
+                        <span>WhatsApp Sharing Reminder: Send as Document ➔</span>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- WhatsApp Document Mode Guardrail Modal -->
+        <div class="modal-overlay" id="whatsappModal" role="dialog" aria-modal="true" aria-labelledby="waModalTitle">
+            <div class="modal-card">
+                <button type="button" class="modal-close-btn" id="btnCloseWaModal" aria-label="Close dialog">✕</button>
+                
+                <div class="modal-badge">
+                    Important Sharing Guide
+                </div>
+                
+                <h2 class="modal-title" id="waModalTitle">Send as a Document on WhatsApp</h2>
+                <p class="modal-desc">
+                    WhatsApp automatically recompresses regular photos into lossy JPEGs, which irreversibly alters raw pixels and <strong>prevents decryption</strong>.
+                    Follow these 3 quick steps to send untouched raw pixels:
+                </p>
+
+                <div class="modal-steps-container">
+                    <div class="modal-step-card">
+                        <div class="step-icon-wrap">📎</div>
+                        <span class="step-number">STEP 1</span>
+                        <span class="step-text">Tap the Paperclip or Plus (+) icon in chat</span>
+                    </div>
+
+                    <div class="modal-step-card" style="border-color: var(--neon-amber);">
+                        <div class="step-icon-wrap" style="color: var(--neon-amber);">📄</div>
+                        <span class="step-number" style="color: var(--neon-amber);">STEP 2</span>
+                        <span class="step-text">Select <strong>"Document"</strong><span class="step-warn-note">(NOT Gallery/Photo)</span></span>
+                    </div>
+
+                    <div class="modal-step-card">
+                        <div class="step-icon-wrap">🔒</div>
+                        <span class="step-number">STEP 3</span>
+                        <span class="step-text">Pick your saved <strong>FYEO_PROTECTED.png</strong></span>
+                    </div>
+                </div>
+
+                <div class="share-copy-box">
+                    <div class="share-copy-label">
+                        <span>RECIPIENT INSTRUCTIONS</span>
+                        <span style="color: var(--mode-accent);">QUICK COPY</span>
+                    </div>
+                    <div class="share-copy-text" id="shareInstructionsText">Hey, I sent you an encrypted photo. Open https://foryoureyesonly-m4th.onrender.com/#unlock and enter password: ...</div>
+                    <div class="share-actions-group">
+                        <button type="button" class="btn-copy-1click" id="btnCopy1ClickLink">
+                            Copy 1-Click Decrypt Link
+                        </button>
+                        <button type="button" class="btn-copy-instructions" id="btnCopyInstructions">
+                            Copy Instructions
+                        </button>
+                        <button type="button" class="btn-action-sec" id="btnToggleQrCode" style="margin-top: 6px;">
+                            📱 Show Air-Gapped QR Key
+                        </button>
+                    </div>
+
+                    <!-- Air-Gapped QR Code Container (FYEO-013) -->
+                    <div id="qrCodeWrapper" style="display: none; flex-direction: column; align-items: center; justify-content: center; margin-top: 14px; padding: 16px; background: #000000; border: 1px solid var(--border-medium); border-radius: var(--radius-md);">
+                        <div id="qrcodeBox" style="background: #ffffff; padding: 12px; border-radius: 8px;"></div>
+                        <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 10px; text-align: center;">Scan with camera on another phone to decrypt with zero network exposure.</span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <label class="modal-checkbox-label">
+                        <input type="checkbox" id="chkDontShowAgain">
+                        <span>Don't show this reminder automatically</span>
+                    </label>
+                    <button type="button" class="btn-modal-dismiss" id="btnDismissWaModal">
+                        Got It, Download File
+                    </button>
+                </div>
             </div>
         </div>
 
-        <a id="downloadBtn">💾 SAVE IMAGE TO DISK</a>
+        <!-- Zero-Storage Secure Camera Viewfinder Modal (FYEO-010) -->
+        <div class="modal-overlay camera-modal-overlay" id="cameraModal" role="dialog" aria-modal="true" aria-labelledby="camModalTitle">
+            <div class="modal-card camera-modal-card">
+                <div class="camera-modal-header">
+                    <div class="cam-title-group">
+                        <span class="cam-live-indicator">
+                            <span class="pulse-dot"></span>
+                            <span id="camModalTitle">SECURE VIEWFINDER</span>
+                        </span>
+                        <span class="badge-privacy">0-STORAGE IN-MEMORY</span>
+                    </div>
+                    <button type="button" class="modal-close-btn" id="btnCloseCameraModal" aria-label="Close camera">✕</button>
+                </div>
+
+                <!-- Viewfinder Container -->
+                <div class="camera-viewfinder-container">
+                    <video id="cameraVideo" class="camera-video-element" autoplay playsinline muted></video>
+                    
+                    <!-- Targeting Guide / Reticle Overlay -->
+                    <div class="camera-reticle" aria-hidden="true">
+                        <div class="reticle-corner top-left"></div>
+                        <div class="reticle-corner top-right"></div>
+                        <div class="reticle-corner bottom-left"></div>
+                        <div class="reticle-corner bottom-right"></div>
+                        <div class="reticle-crosshair"></div>
+                        <div class="reticle-guide-text">ALIGN DOCUMENT INSIDE FRAME</div>
+                    </div>
+                </div>
+
+                <!-- Camera Controls Bar -->
+                <div class="camera-controls-bar">
+                    <button type="button" class="btn-cam-control" id="btnFlipCamera" title="Switch Front / Rear Camera">
+                        <span>🔄</span> Flip
+                    </button>
+
+                    <button type="button" class="btn-cam-shutter" id="btnShutter" title="Take Secret Photo" aria-label="Capture Photo">
+                        <div class="shutter-inner-ring">
+                            <div class="shutter-inner-core"></div>
+                        </div>
+                    </button>
+
+                    <div class="cam-storage-note">
+                        
+                        <span>Direct to RAM. Never touches gallery.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dev & Support Footer -->
+        <footer class="app-footer">
+            <span class="footer-tag">> CLIENT IN-MEMORY PROTOCOL // SECURE CONNECTION</span>
+            <a href="https://wa.me/2349152821837" target="_blank" rel="noopener noreferrer" class="whatsapp-contact-btn">
+                <svg class="whatsapp-svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.001.575 1.901.881 2.806.881 3.181 0 5.767-2.587 5.767-5.766.001-3.182-2.585-5.764-5.767-5.764zm6.126 14.903l-4.343-1.411c-1.854.805-3.694 1.137-5.783 1.137-7.27 0-13.176-5.908-13.176-13.178 0-7.268 5.906-13.175 13.176-13.175 7.27 0 13.176 5.907 13.176 13.175 0 5.584-3.523 10.334-8.525 12.308l5.475 1.144zm-9.053-3.329l.711 2.592-2.654-.696c-1.001.575-1.901.881-2.806.881-3.181 0-5.767-2.587-5.767-5.766-.001-3.182 2.585-5.764 5.767-5.764 3.181 0 5.767 2.586 5.767 5.766-.001 1.298-.38 2.27-1.018 3.287z"/>
+                    <path d="M17.507 14.307l-.941-2.534c-.195-.536-1.155-1.125-1.631-.762-.48.364-1.106 1.012-1.342 1.026-.233.014-2.126-1.119-3.235-2.228-1.109-1.109-2.243-3.002-2.228-3.235.014-.236.662-.863 1.026-1.342.363-.477-.227-1.435-.762-1.631l-2.534-.941c-.537-.196-1.526.439-1.551 1.024-.025.585-.568 2.825 1.838 5.231 2.405 2.405 4.646 1.863 5.231 1.838.585-.025 1.22-.988 1.025-1.525z"/>
+                </svg>
+                Chat on WhatsApp
+            </a>
+        </footer>
+
     </div>
 
+    <!-- Application Script -->
     <script>
-        
-        let processedBlob = null; 
-        const MAX_SIZE_MB = 5;    
-        
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const dropZone = document.getElementById('dropZone');
-            const dropLabel = document.getElementById('dropLabel');
-            const dropSub = document.getElementById('dropSub');
+        /**
+         * State Variables
+         */
+        let currentMode = 'lock'; // 'lock' | 'unlock'
+        let currentEngineMode = 'zk'; // 'zk' (Zero-Knowledge In-Browser) | 'cloud' (Server-Side Fallback)
+        let selectedFile = null;
+        let inputObjectUrl = null;
+        let outputObjectUrl = null;
+        let outputBlob = null;
+        let lastFormattedFilename = '';
+        let isProcessing = false;
+        let isKeyPreloaded = false;
+        let preloadedKeyValue = '';
+        let currentDecryptUrl = '';
+        let cameraStream = null;
+        let currentFacingMode = 'environment'; // 'environment' (back) | 'user' (front)
+
+        // DEV-116: Ephemeral Decrypt Shield & Memory Zeroization
+        let burnInterval = null;
+        let burnRemainingSeconds = 0;
+        let isShieldObscured = false;
+        let lastDecryptedAction = false;
+
+        // Dedicated Web Worker Cache (FYEO-005)
+        let fyeoWorker = null;
+        let workerRequestId = 0;
+        const workerPending = new Map();
+
+        const MAX_ENCRYPT_SIZE_MB = 25;  // Accepts raw camera photos up to 25MB
+        const MAX_DECRYPT_SIZE_MB = 100; // Accepts high-res encrypted documents up to 100MB (no embargo)
+        const DISMISS_WA_KEY = 'fyeo_dismiss_wa_guardrail_v1';
+
+        // DOM Element Caches
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const seedInput = document.getElementById('seedInput');
+        const btnExecute = document.getElementById('btnExecute');
+        const btnExecuteText = document.getElementById('btnExecuteText');
+        const resultsDashboard = document.getElementById('resultsDashboard');
+        const imgInput = document.getElementById('imgInput');
+        const imgOutput = document.getElementById('imgOutput');
+        const btnDownload = document.getElementById('btnDownload');
+        const btnClipboard = document.getElementById('btnClipboard');
+        const btnResetAll = document.getElementById('btnResetAll');
+        const btnRemoveFile = document.getElementById('btnRemoveFile');
+        const zoneErrorMsg = document.getElementById('zoneErrorMsg');
+        const whatsappModal = document.getElementById('whatsappModal');
+        const btnReopenWhatsAppGuide = document.getElementById('btnReopenWhatsAppGuide');
+
+        // DEV-116 DOM Caches
+        const ephemeralShieldBar = document.getElementById('ephemeralShieldBar');
+        const burnTimerSelect = document.getElementById('burnTimerSelect');
+        const burnCountdownBadge = document.getElementById('burnCountdownBadge');
+        const btnBurnNow = document.getElementById('btnBurnNow');
+        const shieldBlurOverlay = document.getElementById('shieldBlurOverlay');
+        const btnShieldReveal = document.getElementById('btnShieldReveal');
+
+        /**
+         * Web Worker Initialization (FYEO-005)
+         */
+        function getWorker() {
+            if (!fyeoWorker && typeof Worker !== 'undefined' && typeof OffscreenCanvas !== 'undefined') {
+                try {
+                    fyeoWorker = new Worker('/js/fyeo-worker.js');
+                    fyeoWorker.onmessage = (e) => {
+                        const { type, id, percent, stage, message, blob, width, height, action, error, code } = e.data || {};
+                        const cb = workerPending.get(id);
+                        if (!cb) return;
+
+                        if (type === 'PROGRESS') {
+                            updateProgressUI(percent, message);
+                        } else if (type === 'SUCCESS') {
+                            workerPending.delete(id);
+                            cb.resolve({ blob, width, height, action, isAsymmetric: e.data.isAsymmetric });
+                        } else if (type === 'DEVICE_KEY_GENERATED') {
+                            workerPending.delete(id);
+                            cb.resolve({ publicKey: e.data.publicKey, privateKey: e.data.privateKey });
+                        } else if (type === 'ERROR') {
+                            workerPending.delete(id);
+                            const err = new Error(error || 'Operation failed');
+                            err.code = code;
+                            cb.reject(err);
+                        }
+                    };
+                    fyeoWorker.onerror = (e) => {
+                        console.error("Worker error:", e);
+                        showToast("Worker execution error: " + (e.message || "Failed running Web Worker"), "error");
+                    };
+                } catch (err) {
+                    console.warn("Could not instantiate Web Worker, falling back to cloud engine:", err);
+                    fyeoWorker = null;
+                }
+            }
+            return fyeoWorker;
+        }
+
+        /**
+         * Engine Mode Selector (FYEO-005)
+         */
+        function setEngineMode(mode) {
+            if (isProcessing) return;
+            currentEngineMode = mode;
+            const btnZk = document.getElementById('btnEngineZk');
+            const btnCloud = document.getElementById('btnEngineCloud');
+            const statusBadge = document.getElementById('engineStatusBadge');
+            const noteText = document.getElementById('engineNoteText');
+            // engineNoteIcon element removed from HTML
+
+            if (mode === 'zk') {
+                btnZk.classList.add('active', 'zk-active');
+                btnZk.setAttribute('aria-checked', 'true');
+                btnZk.setAttribute('tabindex', '0');
+                btnCloud.classList.remove('active', 'cloud-active');
+                btnCloud.setAttribute('aria-checked', 'false');
+                btnCloud.setAttribute('tabindex', '-1');
+
+                statusBadge.className = 'engine-bar-status zk';
+                statusBadge.textContent = '● ZERO-KNOWLEDGE ACTIVE';
+                // engineNoteIcon removed
+                noteText.textContent = 'Zero Network Packets: 100% in-browser visual AEAD executing inside an isolated Web Worker.';
+                showToast("Engine: Zero-Knowledge (In-Browser / 100% Private).", "success");
+            } else {
+                btnCloud.classList.add('active', 'cloud-active');
+                btnCloud.setAttribute('aria-checked', 'true');
+                btnCloud.setAttribute('tabindex', '0');
+                btnZk.classList.remove('active', 'zk-active');
+                btnZk.setAttribute('aria-checked', 'false');
+                btnZk.setAttribute('tabindex', '-1');
+
+                statusBadge.className = 'engine-bar-status cloud';
+                statusBadge.textContent = '● CLOUD ENGINE (SERVER-SIDE)';
+                // engineNoteIcon removed
+                noteText.textContent = 'Server-Side Processing: Fallback utilizing Spring Boot VisualAeadEngine endpoints.';
+                showToast("Engine: Cloud Engine (Server-Side Fallback).", "info");
+            }
+        }
+
+        /**
+         * Mobile Accordion Stepper Controller (Progressive Disclosure)
+         */
+        let currentActiveMobileStep = 1;
+
+        function setMobileStep(step) {
+            currentActiveMobileStep = step;
+
+            const header1 = document.getElementById('stepHeader1');
+            const header2 = document.getElementById('stepHeader2');
+            const header3 = document.getElementById('stepHeader3');
+
+            const content1 = document.getElementById('dropZone');
+            const content2 = document.getElementById('controlsCard');
+            const content3 = document.getElementById('resultsDashboard');
+
+            const badge1 = document.getElementById('stepBadge1');
+            const badge2 = document.getElementById('stepBadge2');
+            const badge3 = document.getElementById('stepBadge3');
+
+            // Reset headers
+            [header1, header2, header3].forEach(h => { if (h) h.classList.remove('active'); });
+            [badge1, badge2, badge3].forEach(b => { if (b) b.textContent = 'STEP'; });
+
+            // Collapse all contents
+            if (content1) content1.classList.add('collapsed');
+            if (content2) content2.classList.add('collapsed');
+            if (content3) content3.classList.add('collapsed');
+
+            if (step === 1) {
+                if (header1) header1.classList.add('active');
+                if (badge1) badge1.textContent = selectedFile ? 'DONE' : 'ACTIVE';
+                if (content1) content1.classList.remove('collapsed');
+            } else if (step === 2) {
+                if (header2) header2.classList.add('active');
+                if (badge2) badge2.textContent = 'ACTIVE';
+                if (content2) content2.classList.remove('collapsed');
+                setTimeout(() => { seedInput.focus(); }, 100);
+            } else if (step === 3) {
+                if (header3) {
+                    header3.classList.add('active');
+                    header3.style.display = 'flex';
+                }
+                if (badge3) badge3.textContent = 'RESULT';
+                if (content3) content3.classList.remove('collapsed');
+            }
+        }
+
+        /**
+         * Initialization & Hash Sync
+         */
+        window.addEventListener('DOMContentLoaded', () => {
+            initModeFromHash();
+            setupEventListeners();
+            // Pre-warm Web Worker
+            getWorker();
+            // Initialize Device-Bound Asymmetric ECDH Keypair
+            initDeviceKey();
+            // Register PWA Service Worker & Check Share Target Media
+            registerPwaServiceWorker();
+            checkSharedTargetMedia();
+        });
+
+        const DEVICE_PUBKEY_STORAGE_KEY = 'fyeo_device_pubkey_v3';
+        let myDevicePublicKey = '';
+        let myDevicePrivateKey = null; // Stored as non-extractable CryptoKey instance
+
+        // --- IndexedDB Secure Key Store for Non-Exportable CryptoKey (CWE-312 Mitigation) ---
+        const IDB_NAME = 'fyeo_secure_keystore_v1';
+        const IDB_STORE = 'device_keys';
+        const IDB_KEY_RECORD_ID = 'primary_device_keypair';
+
+        function openKeyStoreDb() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) {
+                    reject(new Error("IndexedDB not supported"));
+                    return;
+                }
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        async function loadDeviceKeyFromDb() {
+            try {
+                const db = await openKeyStoreDb();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_STORE);
+                    const req = store.get(IDB_KEY_RECORD_ID);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (e) {
+                console.warn('[IndexedDB] Could not load device key from store:', e);
+                return null;
+            }
+        }
+
+        async function saveDeviceKeyToDb(publicKey, privateKey) {
+            try {
+                const db = await openKeyStoreDb();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE, 'readwrite');
+                    const store = tx.objectStore(IDB_STORE);
+                    const req = store.put({
+                        id: IDB_KEY_RECORD_ID,
+                        publicKey,
+                        privateKey,
+                        createdAt: Date.now()
+                    });
+                    req.onsuccess = () => resolve(true);
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (e) {
+                console.warn('[IndexedDB] Could not persist device key:', e);
+                return false;
+            }
+        }
+
+        async function initDeviceKey() {
+            try {
+                // Scrub legacy unencrypted private key from localStorage if present
+                if (localStorage.getItem('fyeo_device_privkey_v3')) {
+                    localStorage.removeItem('fyeo_device_privkey_v3');
+                }
+
+                // 1. Try loading from secure IndexedDB
+                const record = await loadDeviceKeyFromDb();
+                if (record && record.publicKey && record.privateKey) {
+                    myDevicePublicKey = record.publicKey;
+                    myDevicePrivateKey = record.privateKey;
+                    localStorage.setItem(DEVICE_PUBKEY_STORAGE_KEY, record.publicKey);
+                    updateDeviceKeyUI(record.publicKey);
+                    return;
+                }
+
+                // 2. Request new device keypair generation with non-exportable private key from Web Worker
+                const worker = getWorker();
+                if (!worker) return;
+
+                const reqId = ++workerRequestId;
+                const keyPromise = new Promise((resolve, reject) => {
+                    workerPending.set(reqId, { resolve, reject });
+                    worker.postMessage({ type: 'GENERATE_DEVICE_KEY', id: reqId });
+                });
+
+                const result = await keyPromise;
+                if (result && result.publicKey && result.privateKey) {
+                    myDevicePublicKey = result.publicKey;
+                    myDevicePrivateKey = result.privateKey; // CryptoKey object
+                    localStorage.setItem(DEVICE_PUBKEY_STORAGE_KEY, result.publicKey);
+                    await saveDeviceKeyToDb(result.publicKey, result.privateKey);
+                    updateDeviceKeyUI(result.publicKey);
+                }
+            } catch (err) {
+                console.warn('[ECDH] Failed to initialize device keypair:', err);
+                const display = document.getElementById('myPublicKeyDisplay');
+                if (display) display.textContent = 'Hardware unavailable';
+            }
+        }
+
+        function updateDeviceKeyUI(pubKey) {
+            const display = document.getElementById('myPublicKeyDisplay');
+            if (display) {
+                const preview = pubKey.substring(0, 16) + '...' + pubKey.substring(pubKey.length - 6);
+                display.textContent = preview;
+                display.title = pubKey;
+            }
+        }
+
+        async function copyMyPublicKey() {
+            if (!myDevicePublicKey) {
+                showToast("Device key is still generating...", "info");
+                return;
+            }
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(myDevicePublicKey);
+                    showToast("Your Device Handle copied! Share it with the sender.", "success");
+                } else {
+                    fallbackCopyText(myDevicePublicKey, "Your Device Handle copied! Share it with the sender.");
+                }
+            } catch (err) {
+                fallbackCopyText(myDevicePublicKey, "Your Device Handle copied! Share it with the sender.");
+            }
+        }
+
+        async function registerPwaServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator.serviceWorker.register('/sw.js');
+                } catch (e) {
+                    console.warn('[PWA] Service worker registration error:', e);
+                }
+            }
+        }
+
+        async function checkSharedTargetMedia() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('shared') || !('caches' in window)) return;
+
+            try {
+                const cache = await caches.open('fyeo-shared-media');
+                const response = await cache.match('/shared-incoming-photo');
+                if (response) {
+                    const blob = await response.blob();
+                    const rawFileName = response.headers.get('x-file-name') || 'shared-image.png';
+                    const fileName = decodeURIComponent(rawFileName);
+                    const file = new File([blob], fileName, { type: blob.type || 'image/png' });
+
+                    // Clean cache immediately to keep memory zero-trace
+                    await cache.delete('/shared-incoming-photo');
+
+                    // Remove ?shared=1 from URL history without page reload
+                    const cleanUrl = window.location.pathname + window.location.hash;
+                    window.history.replaceState(null, '', cleanUrl);
+
+                    // Route directly into in-memory crypto pipeline
+                    handleFileSelection(file);
+                    showToast(`Photo received via Share: ${fileName}`, 'success');
+                }
+            } catch (err) {
+                console.warn('[PWA] Failed to retrieve shared target media:', err);
+            }
+        }
+
+
+        window.addEventListener('hashchange', () => {
+            initModeFromHash();
+        });
+
+        function parseUrlHash() {
+            const rawHash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash;
+            if (!rawHash) return { mode: null, key: null, burn: null };
+
+            let mode = null;
+            let key = null;
+            let burn = null;
+
+            if (rawHash.includes('=')) {
+                let paramsString = rawHash;
+                if (paramsString.startsWith('unlock&') || paramsString.startsWith('restore&') || paramsString.startsWith('decrypt&')) {
+                    mode = 'unlock';
+                    paramsString = paramsString.substring(paramsString.indexOf('&') + 1);
+                } else if (paramsString.startsWith('lock&')) {
+                    mode = 'lock';
+                    paramsString = paramsString.substring(paramsString.indexOf('&') + 1);
+                }
+
+                try {
+                    const params = new URLSearchParams(paramsString);
+                    if (params.has('mode')) {
+                        mode = params.get('mode');
+                    }
+                    if (params.has('key')) {
+                        key = params.get('key');
+                    }
+                    if (params.has('burn')) {
+                        burn = parseInt(params.get('burn'), 10) || null;
+                    }
+                } catch (e) {
+                    console.warn("Failed to parse hash params via URLSearchParams:", e);
+                }
+            } else {
+                const lower = rawHash.toLowerCase();
+                if (lower === 'unlock' || lower === 'restore' || lower === 'decrypt') {
+                    mode = 'unlock';
+                } else if (lower === 'lock') {
+                    mode = 'lock';
+                }
+            }
+
+            return { mode, key, burn };
+        }
+
+        function initModeFromHash() {
+            const { mode, key, burn } = parseUrlHash();
+
+            if (burn && burnTimerSelect) {
+                if (burn === 30 || burn === 60) {
+                    burnTimerSelect.value = String(burn);
+                }
+            }
+
+            if (key) {
+                // FYEO-009: 1-Click Auto-Populate & Switch to Unlock Tab
+                switchMode('unlock', false);
+                seedInput.value = key;
+                isKeyPreloaded = true;
+                preloadedKeyValue = key;
+                showPreloadedKeyBadge();
+                showToast("Secure Key Pre-Loaded from Link!", "success");
+            } else if (mode === 'unlock' || mode === 'restore' || mode === 'decrypt') {
+                if (currentMode !== 'unlock') switchMode('unlock', false);
+            } else if (mode === 'lock') {
+                if (currentMode !== 'lock') switchMode('lock', false);
+            }
+        }
+
+        function showPreloadedKeyBadge() {
+            const badge = document.getElementById('preloadedKeyBadge');
+            if (badge) badge.style.display = 'inline-flex';
+        }
+
+        function hidePreloadedKeyBadge() {
+            const badge = document.getElementById('preloadedKeyBadge');
+            if (badge) badge.style.display = 'none';
+        }
+
+        /**
+         * Scrub the private password out of the DOM, in-memory state and the URL
+         * fragment. Deliberately silent — the caller owns user-facing feedback.
+         * Used after a successful crypto operation so the secret does not linger
+         * in the field (or the address bar / session history) once consumed.
+         */
+        function scrubSeedFromMemory() {
+            seedInput.value = '';
+            isKeyPreloaded = false;
+            preloadedKeyValue = '';
+            hidePreloadedKeyBadge();
+            if (window.location.hash.includes('key=')) {
+                history.replaceState(null, '', currentMode === 'unlock' ? '#unlock' : '#lock');
+            }
+        }
+
+        function clearPreloadedKey() {
+            scrubSeedFromMemory();
+            showToast("Pre-loaded key cleared.", "info");
+        }
+
+        /**
+         * Tab Mode Switcher (FYEO-001)
+         */
+        function switchMode(newMode, updateHash = true) {
+            if (isProcessing) return;
+            currentMode = newMode;
+            document.body.setAttribute('data-mode', newMode);
+
+            if (whatsappModal && whatsappModal.classList.contains('active')) {
+                closeWhatsAppModal();
+            }
+
+            if (updateHash) {
+                history.replaceState(null, '', newMode === 'unlock' ? '#unlock' : '#lock');
+            }
+
+            const tabLock = document.getElementById('tabLock');
+            const tabUnlock = document.getElementById('tabUnlock');
+            const protocolStatusText = document.getElementById('protocolStatusText');
+            const modeBanner = document.getElementById('modeBanner');
+            // modeBannerIcon element removed from HTML
+            const modeBannerMsg = document.getElementById('modeBannerMsg');
+            const modeBannerTag = document.getElementById('modeBannerTag');
+            const dropTitle = document.getElementById('dropTitle');
+            const dropHint = document.getElementById('dropHint');
+            const formatBadge = document.getElementById('formatBadge');
+            const seedInputLabel = document.getElementById('seedInputLabel');
+            const seedInputHint = document.getElementById('seedInputHint');
+
+            if (newMode === 'lock') {
+                tabLock.setAttribute('aria-selected', 'true');
+                tabLock.setAttribute('tabindex', '0');
+                tabUnlock.setAttribute('aria-selected', 'false');
+                tabUnlock.setAttribute('tabindex', '-1');
+
+                protocolStatusText.textContent = "SYSTEM ACTIVE // MODE: LOCK";
+                // modeBannerIcon removed
+                modeBannerMsg.textContent = "Drop a raw photo to scramble its pixels beyond recognition.";
+                modeBannerTag.textContent = "ENCRYPT MODE";
+
+                protocolStatusText.textContent = "SYSTEM READY · ENCRYPT MODE";
+                // modeBannerIcon removed
+                modeBannerMsg.textContent = "Drop a photo to protect its visual content before sharing.";
+                modeBannerTag.textContent = "ENCRYPT MODE";
+
+                dropTitle.textContent = "Drop your photo here or tap to browse";
+                dropHint.textContent = "High-resolution JPG, PNG or WebP up to 25MB";
+                formatBadge.textContent = "JPG, PNG, WEBP";
+                const sizeBadge = document.getElementById('sizeBadge');
+                if (sizeBadge) sizeBadge.textContent = "MAX 25MB";
+
+                seedInputLabel.textContent = "Private Encryption Password";
+                seedInputHint.textContent = "Remember this key to restore photo";
+                seedInput.placeholder = "Enter password to protect photo...";
+                btnExecuteText.textContent = "Encrypt & Protect";
+
+                btnReopenWhatsAppGuide.style.display = "flex";
+                const btnQrDirect = document.getElementById('btnOpenQrDirect');
+                if (btnQrDirect) btnQrDirect.style.display = "inline-flex";
+
+                // Camera trigger: Lock mode only — you can't take a photo to decrypt
+                const btnCamera = document.getElementById('btnOpenSecureCamera');
+                if (btnCamera) btnCamera.closest('.zone-trigger-row').style.display = "flex";
+            } else {
+                tabUnlock.setAttribute('aria-selected', 'true');
+                tabUnlock.setAttribute('tabindex', '0');
+                tabLock.setAttribute('aria-selected', 'false');
+                tabLock.setAttribute('tabindex', '-1');
+
+                protocolStatusText.textContent = "SYSTEM READY · DECRYPT MODE";
+                // modeBannerIcon removed
+                modeBannerMsg.textContent = "Drop the protected PNG to restore the original photo.";
+                modeBannerTag.textContent = "DECRYPT MODE";
+
+                dropTitle.textContent = "Drop protected PNG file here";
+                dropHint.textContent = "Select authentic protected PNG document (Up to 100MB)";
+                formatBadge.textContent = "PNG ONLY";
+                const sizeBadge = document.getElementById('sizeBadge');
+                if (sizeBadge) sizeBadge.textContent = "UP TO 100MB";
+
+                seedInputLabel.textContent = "Decryption Password";
+                seedInputHint.textContent = "Exact key used during encryption";
+                seedInput.placeholder = "Enter password to restore original...";
+                btnExecuteText.textContent = "Restore Original";
+
+                btnReopenWhatsAppGuide.style.display = "none";
+                const btnQrDirect = document.getElementById('btnOpenQrDirect');
+                if (btnQrDirect) btnQrDirect.style.display = "none";
+
+                // Camera trigger: hidden on Unlock tab — no photo capture needed for decryption
+                const btnCamera = document.getElementById('btnOpenSecureCamera');
+                if (btnCamera) btnCamera.closest('.zone-trigger-row').style.display = "none";
+            }
+
+            // Preloaded key badge visibility tied to unlock mode
+            const preloadedKeyBadge = document.getElementById('preloadedKeyBadge');
+            if (preloadedKeyBadge) {
+                preloadedKeyBadge.style.display = (isKeyPreloaded && newMode === 'unlock') ? 'inline-flex' : 'none';
+            }
+
+            // Clean state & memory buffers on tab change (Edge case invariant)
+            clearFileSelection();
+            hideResults();
+        }
+
+        /**
+         * Event Listeners Setup
+         */
+        function setupEventListeners() {
+            // Drag and Drop (FYEO-003)
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!isProcessing) {
+                        dropZone.classList.add('state-dragover');
+                    }
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('state-dragover');
+                });
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                if (isProcessing) return;
+                const dt = e.dataTransfer;
+                if (dt && dt.files && dt.files.length > 0) {
+                    handleFileSelection(dt.files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+
+            btnRemoveFile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                clearFileSelection();
+                showToast("File selection cleared.", "info");
+            });
+
+            // Password Toggle
+            // Text rather than an emoji: an emoji renders inconsistently across
+            // platforms and cannot express state. The label names the *action*
+            // so it stays correct whether the field is shown or masked.
+            const pwToggleBtn = document.getElementById('btnTogglePassword');
+            const pwToggleIcon = document.getElementById('pwToggleIcon');
+            pwToggleBtn.addEventListener('click', () => {
+                const willShow = seedInput.type === 'password';
+                seedInput.type = willShow ? 'text' : 'password';
+                pwToggleIcon.textContent = willShow ? 'Hide' : 'Show';
+                pwToggleBtn.setAttribute('aria-label', willShow ? 'Hide password' : 'Show password');
+                /* Returning focus to the field keeps the keyboard/mobile flow
+                   from jumping back to the top of the screen. */
+                seedInput.focus();
+            });
+
+            // Enter key trigger in password input
+            seedInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    btnExecute.click();
+                }
+            });
+
+            // Primary Execute Button
+            btnExecute.addEventListener('click', () => {
+                executeCryptoProtocol();
+            });
+
+            // Preloaded Key Badge Clear & Invalidation (FYEO-009)
+            const btnClearPreloadedKey = document.getElementById('btnClearPreloadedKey');
+            if (btnClearPreloadedKey) {
+                btnClearPreloadedKey.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    clearPreloadedKey();
+                });
+            }
+
+            seedInput.addEventListener('input', () => {
+                if (isKeyPreloaded && seedInput.value !== preloadedKeyValue) {
+                    isKeyPreloaded = false;
+                    hidePreloadedKeyBadge();
+                }
+            });
+
+            // Action Buttons
+            btnClipboard.addEventListener('click', copyImageToClipboard);
+            btnResetAll.addEventListener('click', () => {
+                clearFileSelection();
+                hideResults();
+                seedInput.value = '';
+                isKeyPreloaded = false;
+                preloadedKeyValue = '';
+                hidePreloadedKeyBadge();
+                showToast("Workspace reset. Ready for next file.", "info");
+            });
+
+            // WhatsApp Modal Listeners (FYEO-002 / FYEO-009)
+            document.getElementById('btnCloseWaModal').addEventListener('click', closeWhatsAppModal);
+            document.getElementById('btnDismissWaModal').addEventListener('click', () => {
+                closeWhatsAppModal();
+                if (btnDownload.href) {
+                    btnDownload.click();
+                }
+            });
+
+            btnReopenWhatsAppGuide.addEventListener('click', () => {
+                openWhatsAppModal();
+            });
+
+            document.getElementById('btnCopy1ClickLink').addEventListener('click', copy1ClickLink);
+            document.getElementById('btnCopyInstructions').addEventListener('click', copyShareInstructions);
+
+            const btnOpenQrDirect = document.getElementById('btnOpenQrDirect');
+            if (btnOpenQrDirect) {
+                btnOpenQrDirect.addEventListener('click', () => {
+                    openWhatsAppModal();
+                    const qrWrapper = document.getElementById('qrCodeWrapper');
+                    if (qrWrapper && (qrWrapper.style.display === 'none' || qrWrapper.style.display === '')) {
+                        toggleQrCodeDisplay();
+                    }
+                });
+            }
+
+            const btnToggleQrCode = document.getElementById('btnToggleQrCode');
+            if (btnToggleQrCode) {
+                btnToggleQrCode.addEventListener('click', toggleQrCodeDisplay);
+            }
+
+            const btnCopyMyPublicKey = document.getElementById('btnCopyMyPublicKey');
+            if (btnCopyMyPublicKey) {
+                btnCopyMyPublicKey.addEventListener('click', copyMyPublicKey);
+            }
+
+            // Secure In-App Camera Listeners (FYEO-010)
+            const btnOpenSecureCamera = document.getElementById('btnOpenSecureCamera');
+            if (btnOpenSecureCamera) {
+                btnOpenSecureCamera.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openSecureCamera();
+                });
+            }
+
+            const btnCloseCameraModal = document.getElementById('btnCloseCameraModal');
+            if (btnCloseCameraModal) {
+                btnCloseCameraModal.addEventListener('click', closeCameraModal);
+            }
+
+            const btnShutter = document.getElementById('btnShutter');
+            if (btnShutter) {
+                btnShutter.addEventListener('click', captureSecretPhoto);
+            }
+
+            const btnFlipCamera = document.getElementById('btnFlipCamera');
+            if (btnFlipCamera) {
+                btnFlipCamera.addEventListener('click', flipCamera);
+            }
+
+            // Manual Accordion Toggle
+            const btnToggleManual = document.getElementById('btnToggleManual');
+            const manualPanel = document.getElementById('manualPanel');
+            const manualCaret = document.getElementById('manualCaret');
+            btnToggleManual.addEventListener('click', () => {
+                const isOpen = manualPanel.classList.toggle('open');
+                btnToggleManual.setAttribute('aria-expanded', isOpen);
+                manualCaret.textContent = isOpen ? '▲' : '▼';
+            });
+
+            // DEV-116: Ephemeral Decrypt Shield & Burn Listeners
+            if (btnBurnNow) {
+                btnBurnNow.addEventListener('click', () => {
+                    burnAndZeroizeMemory(false);
+                });
+            }
+
+            if (btnShieldReveal) {
+                btnShieldReveal.addEventListener('click', () => {
+                    revealDecryptedView();
+                });
+            }
+
+            if (burnTimerSelect) {
+                burnTimerSelect.addEventListener('change', () => {
+                    const secs = parseInt(burnTimerSelect.value, 10) || 0;
+                    if (resultsDashboard.style.display !== 'none' && lastDecryptedAction) {
+                        startBurnTimer(secs);
+                    }
+                });
+            }
+
+            // Tab-Switch / Shoulder Surfing Auto-Blur Shield
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    if (resultsDashboard.style.display !== 'none' && lastDecryptedAction && outputBlob) {
+                        obscureDecryptedView();
+                    }
+                }
+            });
+
+            window.addEventListener('blur', () => {
+                if (resultsDashboard.style.display !== 'none' && lastDecryptedAction && outputBlob) {
+                    obscureDecryptedView();
+                }
+            });
+        }
+
+        /**
+         * File Selection & Validation (FYEO-003)
+         */
+        function handleFileSelection(file) {
+            clearErrors();
 
             if (!file) return;
 
+            // Validate format
+            const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+            const isImage = validTypes.includes(file.type) || file.name.match(/\.(png|jpe?g|webp)$/i);
             
+            if (!isImage) {
+                showZoneError("Unsupported format. Please select a JPG or PNG image.");
+                showToast("Invalid file format. Select JPG or PNG.", "error");
+                return;
+            }
+
+            // In unlock mode, recommend PNG
+            if (currentMode === 'unlock' && !file.name.match(/\.png$/i) && file.type !== 'image/png') {
+                showToast("Warning: Decryption requires untouched .PNG file.", "warning");
+            }
+
+            // Validate size dynamically based on active mode (Lock = 25MB, Unlock = 100MB)
+            const maxLimit = currentMode === 'lock' ? MAX_ENCRYPT_SIZE_MB : MAX_DECRYPT_SIZE_MB;
             const fileSizeMB = file.size / (1024 * 1024);
-            
-            console.log(fileSizeMB);
-            
-            console.log(fileSizeMB > MAX_SIZE_MB);
-            if (fileSizeMB > MAX_SIZE_MB) {
-                
-                processedBlob = null;
-                dropZone.classList.add('error');
-                dropLabel.textContent = "ERROR: FILE TOO LARGE";
-                dropSub.textContent = "DETECTED: " + fileSizeMB.toFixed(1) + "MB (LIMIT: " + MAX_SIZE_MB + "MB)";
-                log("CRITICAL: FILE EXCEEDS 5MB LIMIT. SYSTEM REJECTED.", "red");
-                
-                
-                document.getElementById('dashboard').style.display = "none";
+            if (fileSizeMB > maxLimit) {
+                showZoneError(`Exceeds ${maxLimit}MB limit (${fileSizeMB.toFixed(1)}MB detected). Choose a smaller file.`);
+                showToast(`File exceeds ${maxLimit}MB limit (${fileSizeMB.toFixed(1)}MB).`, "error");
                 return;
             }
 
-            
-            dropZone.classList.remove('error');
-            processedBlob = file; 
-            
-            
-            document.getElementById('imgInput').src = URL.createObjectURL(file);
-            document.getElementById('dashboard').style.display = "grid";
-            dropLabel.textContent = "> READY: " + file.name;
-            dropSub.textContent = "SIZE: " + fileSizeMB.toFixed(2) + " MB";
-            
-            // Reset Output side
-            document.getElementById('imgOutput').src = "";
-            document.getElementById('downloadBtn').style.display = "none";
-            log("IMAGE BUFFERED. AWAITING COMMAND.", "#00ff41");
-        });
-
-       
-        async function executeProtocol(action) {
-            const seedText = document.getElementById('seedInput').value;
-            const logBox = document.getElementById('consoleLog');
-
-            if (!processedBlob) {
-                log("ERROR: NO VALID IMAGE DETECTED.", "red");
-                return;
-            }
-            if (!seedText) {
-                log("ERROR: SECURITY KEY REQUIRED.", "red");
-                return;
+            // Revoke old input URL if any
+            if (inputObjectUrl) {
+                URL.revokeObjectURL(inputObjectUrl);
             }
 
-            
+            selectedFile = file;
+            inputObjectUrl = URL.createObjectURL(file);
+
+            // Populate Loaded Card
+            document.getElementById('thumbPreview').src = inputObjectUrl;
+            document.getElementById('loadedFileName').textContent = file.name;
+            document.getElementById('loadedFileSize').textContent = formatBytes(file.size);
+
+            dropZone.classList.remove('state-idle', 'state-error');
+            dropZone.classList.add('state-loaded');
+
+            // Pre-load input into comparison dashboard
+            imgInput.src = inputObjectUrl;
+            hideResults();
+
+            showToast(`Loaded: ${file.name} (${formatBytes(file.size)})`, "success");
+
+            // Auto-advance stepper to Step 2 (Choose Key) on mobile
+            if (window.innerWidth <= 768) {
+                setMobileStep(2);
+            }
+
+            // 1-Click Auto-Decrypt if key is pre-loaded (FYEO-009)
+            if (currentMode === 'unlock' && isKeyPreloaded && seedInput.value.trim().length > 0) {
+                showToast("Key pre-loaded from link! Decrypting automatically...", "info");
+                setTimeout(() => {
+                    if (!isProcessing && selectedFile) {
+                        executeCryptoProtocol();
+                    }
+                }, 120);
+            }
+        }
+
+        function clearFileSelection() {
+            selectedFile = null;
+            fileInput.value = '';
+            if (inputObjectUrl) {
+                URL.revokeObjectURL(inputObjectUrl);
+                inputObjectUrl = null;
+            }
+            dropZone.classList.remove('state-loaded', 'state-processing', 'state-error');
+            dropZone.classList.add('state-idle');
+            clearErrors();
+            if (window.innerWidth <= 768) {
+                setMobileStep(1);
+            }
+        }
+
+        function showZoneError(msg) {
+            dropZone.classList.remove('state-loaded', 'state-processing');
+            dropZone.classList.add('state-error');
+            zoneErrorMsg.textContent = "✕ " + msg;
+            btnExecute.disabled = true;
+        }
+
+        function clearErrors() {
+            dropZone.classList.remove('state-error');
+            zoneErrorMsg.textContent = "";
+            btnExecute.disabled = false;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        /**
+         * Dual Execution Protocol (Zero-Knowledge Worker vs Cloud Fallback)
+         */
+        async function executeCryptoProtocol() {
+            if (isProcessing) return;
+
+            if (!selectedFile) {
+                showToast("Please upload an image first.", "warning");
+                dropZone.focus();
+                return;
+            }
+
+            const action = currentMode === 'lock' ? 'encrypt' : 'decrypt';
+            const seedText = seedInput.value.trim();
+
+            if (!seedText && action === 'lock') {
+                showToast("Please enter a private password or recipient handle.", "warning");
+                seedInput.focus();
+                return;
+            }
+
+            // --- Zero-Knowledge In-Browser Mode (FYEO-005) ---
+            if (currentEngineMode === 'zk') {
+                const worker = getWorker();
+                if (!worker) {
+                    showToast("Web Worker not supported in this browser. Switching to Cloud Engine.", "warning");
+                    setEngineMode('cloud');
+                    return executeCryptoProtocol();
+                }
+
+                setProcessingState(true, action, 5, "Preparing image buffer in memory...");
+
+                try {
+                    const reqId = ++workerRequestId;
+                    const workerPromise = new Promise((resolve, reject) => {
+                        workerPending.set(reqId, { resolve, reject });
+                        worker.postMessage({
+                            type: action === 'encrypt' ? 'ENCRYPT' : 'DECRYPT',
+                            id: reqId,
+                            fileBlob: selectedFile,
+                            password: seedText,
+                            recipientKey: (seedText.startsWith('fyeo-pub-')) ? seedText : null,
+                            privateKey: (!seedText && myDevicePrivateKey) ? myDevicePrivateKey : null
+                        });
+                    });
+
+                    const result = await workerPromise;
+
+                    if (outputObjectUrl) {
+                        URL.revokeObjectURL(outputObjectUrl);
+                    }
+
+                    outputBlob = result.blob;
+                    outputObjectUrl = URL.createObjectURL(outputBlob);
+
+                    renderResults(action, seedText);
+
+                    if (action === 'encrypt') {
+                        showToast("Encryption complete! Scrambled PNG is ready (100% Zero-Knowledge).", "success");
+                        const dismissed = localStorage.getItem(DISMISS_WA_KEY);
+                        if (!dismissed) {
+                            openWhatsAppModal(seedText);
+                        }
+                    } else {
+                        showToast("Decryption complete! Original photo restored in-browser.", "success");
+                    }
+
+                    // Consume the secret: the operation succeeded, so the password is
+                    // no longer needed in the field. Runs last so the WhatsApp share
+                    // link (which embeds the key) is already built.
+                    scrubSeedFromMemory();
+                } catch (err) {
+                    console.error("Zero-Knowledge Crypto Error:", err);
+                    if (err.code === 'AUTHENTICATION_FAILED') {
+                        showToast("Wrong Password or Tampered Image: The password does not match or the image pixels have been altered.", "error");
+                    } else if (err.code === 'CORRUPTED_OR_COMPRESSED_IMAGE' || err.code === 'CORRUPTED_PNG_CRC_MISMATCH') {
+                        showToast("Compression Damage / Metadata Missing: Image was compressed (e.g. by WhatsApp photo sharing) or metadata was stripped. Send as an uncompressed document.", "error");
+                    } else if (err.code === 'IMAGE_DIMENSIONS_MISMATCH_OR_CROPPED') {
+                        showToast("Image Dimensions Mismatch: The image has been cropped or resized.", "error");
+                    } else {
+                        showToast(`Operation failed: ${err.message || 'Unknown error'}`, "error");
+                    }
+                } finally {
+                    setProcessingState(false, action);
+                }
+                return;
+            }
+
+            // --- Cloud Engine Mode (Server-Side Fallback) ---
             const endpointUrl = action === 'encrypt' ? '/encrypt' : '/decrypt';
 
-            log("INITIATING " + action.toUpperCase() + " SEQUENCE...", "yellow");
-
-            
             let numericKey = 0;
             for (let i = 0; i < seedText.length; i++) {
                 numericKey = ((numericKey << 5) - numericKey) + seedText.charCodeAt(i);
                 numericKey |= 0;
             }
 
-            
             const formData = new FormData();
-            formData.append("file", processedBlob); // Sends RAW file
-            formData.append("key", numericKey);     // Sends Hash Int
+            formData.append("file", selectedFile);
+            formData.append("key", numericKey);
+            formData.append("password", seedText);
+
+            setProcessingState(true, action, 20, "Uploading to server...");
 
             try {
                 const response = await fetch(endpointUrl, {
@@ -379,35 +1509,647 @@
                 });
 
                 if (!response.ok) {
-					console.log(response.body)
+                    let errorMessage = `Server returned HTTP ${response.status}`;
+                    try {
+                        const errorJson = await response.json();
+                        if (errorJson && errorJson.message) {
+                            errorMessage = errorJson.message;
+                        }
+                    } catch (e) {
+                        // ignore non-json response
+                    }
+
+                    if (response.status === 400 || errorMessage.includes("AUTHENTICATION_FAILED")) {
+                        throw new Error("Wrong Password or Tampered Image: The password does not match or the image pixels have been altered.");
+                    } else if (response.status === 422 || errorMessage.includes("CORRUPTED_OR_COMPRESSED_IMAGE")) {
+                        throw new Error("Compression Damage / Metadata Missing: Image was compressed (e.g. by WhatsApp photo sharing) or metadata was stripped. Send as an uncompressed document.");
+                    }
+                    throw new Error(errorMessage);
                 }
 
-                const resultBlob = await response.blob();
-                const resultUrl = URL.createObjectURL(resultBlob);
+                if (outputObjectUrl) {
+                    URL.revokeObjectURL(outputObjectUrl);
+                }
 
-                document.getElementById('imgOutput').src = resultUrl;
-                document.getElementById('imgOutput').style.opacity = "1";
+                outputBlob = await response.blob();
+                outputObjectUrl = URL.createObjectURL(outputBlob);
 
-                const dlBtn = document.getElementById('downloadBtn');
-                dlBtn.href = resultUrl;
-                const prefix = action === "encrypt" ? "SCRAMBLED_" : "RESTORED_";
-                dlBtn.download = prefix + "SECURE.png";
-                dlBtn.style.display = "block";
-                dlBtn.textContent = "💾 SAVE " + (action === "encrypt" ? "ENCRYPTED" : "RESTORED") + " IMAGE";
+                renderResults(action, seedText);
 
-                log("OPERATION SUCCESSFUL.", "#00ff41");
+                if (action === 'encrypt') {
+                    showToast("Encryption complete! Scrambled PNG is ready (Cloud Engine).", "success");
+                    const dismissed = localStorage.getItem(DISMISS_WA_KEY);
+                    if (!dismissed) {
+                        openWhatsAppModal(seedText);
+                    }
+                } else {
+                    showToast("Decryption complete! Original photo restored (Cloud Engine).", "success");
+                }
 
-            } catch (error) {
-                console.error(error);
-                log("SYSTEM FAILURE: " + error.message, "red");
+                // Consume the secret (see Zero-Knowledge path above)
+                scrubSeedFromMemory();
+
+            } catch (err) {
+                console.error("Crypto execution error:", err);
+                showToast(`Operation failed: ${err.message}`, "error");
+            } finally {
+                setProcessingState(false, action);
             }
         }
 
-        function log(msg, color) {
-            const el = document.getElementById('consoleLog');
-            el.textContent = "> " + msg;
-            el.style.color = color || "#e0e0e0";
+        function setProcessingState(processing, action, percent = 0, message = '') {
+            isProcessing = processing;
+            btnExecute.disabled = processing;
+            
+            const processingText = document.getElementById('processingText');
+            const progressBar = document.getElementById('processingProgressBar');
+            const subtext = document.getElementById('processingSubtext');
+
+            if (processing) {
+                btnExecute.classList.add('loading');
+                btnExecuteText.textContent = action === 'encrypt' ? "Protecting in Memory..." : "Restoring Photo...";
+                dropZone.classList.add('state-processing');
+                processingText.textContent = action === 'encrypt' ? "Encrypting Pixels in Memory..." : "Restoring Original Photo...";
+                if (progressBar) progressBar.style.width = percent + '%';
+                if (subtext) subtext.textContent = message || (currentEngineMode === 'zk' ? "Running In-Browser Worker..." : "Contacting Secure Server...");
+            } else {
+                btnExecute.classList.remove('loading');
+                btnExecuteText.textContent = currentMode === 'lock' ? "Encrypt & Protect" : "Restore Original";
+                dropZone.classList.remove('state-processing');
+                if (progressBar) progressBar.style.width = '0%';
+                if (subtext) subtext.textContent = '';
+                if (selectedFile) {
+                    dropZone.classList.add('state-loaded');
+                } else {
+                    dropZone.classList.add('state-idle');
+                }
+            }
         }
+
+        /**
+         * DEV-116: Ephemeral Decrypt Shield & Memory Zeroization Helpers
+         */
+        function stopBurnTimer() {
+            if (burnInterval) {
+                clearInterval(burnInterval);
+                burnInterval = null;
+            }
+            burnRemainingSeconds = 0;
+            if (burnCountdownBadge) {
+                burnCountdownBadge.style.display = 'none';
+            }
+        }
+
+        function startBurnTimer(seconds) {
+            stopBurnTimer();
+            if (seconds <= 0) return;
+
+            burnRemainingSeconds = seconds;
+            if (burnCountdownBadge) {
+                burnCountdownBadge.textContent = `🔥 ${burnRemainingSeconds}s`;
+                burnCountdownBadge.style.display = 'inline-block';
+            }
+
+            burnInterval = setInterval(() => {
+                burnRemainingSeconds--;
+                if (burnRemainingSeconds > 0) {
+                    if (burnCountdownBadge) {
+                        burnCountdownBadge.textContent = `🔥 ${burnRemainingSeconds}s`;
+                    }
+                } else {
+                    stopBurnTimer();
+                    burnAndZeroizeMemory(true);
+                }
+            }, 1000);
+        }
+
+        function obscureDecryptedView() {
+            if (!lastDecryptedAction || !outputBlob) return;
+            const outputCard = document.getElementById('cardViewportOutput');
+            if (outputCard) {
+                const wrapper = outputCard.querySelector('.viewport-image-wrapper');
+                if (wrapper) wrapper.classList.add('shield-obscured');
+            }
+            if (shieldBlurOverlay) {
+                shieldBlurOverlay.style.display = 'flex';
+            }
+            isShieldObscured = true;
+        }
+
+        function revealDecryptedView() {
+            const outputCard = document.getElementById('cardViewportOutput');
+            if (outputCard) {
+                const wrapper = outputCard.querySelector('.viewport-image-wrapper');
+                if (wrapper) wrapper.classList.remove('shield-obscured');
+            }
+            if (shieldBlurOverlay) {
+                shieldBlurOverlay.style.display = 'none';
+            }
+            isShieldObscured = false;
+        }
+
+        function burnAndZeroizeMemory(fromTimer = false) {
+            stopBurnTimer();
+            revealDecryptedView();
+
+            if (burnTimerSelect) {
+                burnTimerSelect.value = "0";
+            }
+
+            // Zeroize worker memory if worker is instantiated
+            if (fyeoWorker) {
+                try {
+                    fyeoWorker.postMessage({ type: 'ZEROIZE', id: 'zeroize_' + Date.now() });
+                } catch (e) {
+                    console.warn("Could not post ZEROIZE to worker:", e);
+                }
+            }
+
+            // Revoke and clear blob URLs
+            if (outputObjectUrl) {
+                URL.revokeObjectURL(outputObjectUrl);
+                outputObjectUrl = null;
+            }
+            if (inputObjectUrl) {
+                URL.revokeObjectURL(inputObjectUrl);
+                inputObjectUrl = null;
+            }
+
+            // Clear image sources
+            if (imgOutput) imgOutput.src = '';
+            if (imgInput) imgInput.src = '';
+            outputBlob = null;
+            selectedFile = null;
+            lastDecryptedAction = false;
+
+            // Clear DOM inputs and file picker
+            if (fileInput) fileInput.value = '';
+            clearFileSelection();
+            hideResults();
+
+            // Clear password and preloaded key
+            if (seedInput) seedInput.value = '';
+            isKeyPreloaded = false;
+            preloadedKeyValue = '';
+            hidePreloadedKeyBadge();
+
+            const msg = fromTimer
+                ? "🔥 Auto-burn triggered: Restored photo destroyed & memory zeroized."
+                : "🔥 Restored photo burned & memory zeroized.";
+            showToast(msg, "info");
+        }
+
+        /**
+         * Render Results Dashboard (FYEO-004 / DEV-116)
+         */
+        function renderResults(action, seedText) {
+            imgInput.src = inputObjectUrl;
+            imgOutput.src = outputObjectUrl;
+
+            const resultsBadge = document.getElementById('resultsBadge');
+            const resultsTitle = document.getElementById('resultsTitle');
+            const lblInputViewport = document.getElementById('lblInputViewport');
+            const lblOutputViewport = document.getElementById('lblOutputViewport');
+            const tagOutputEntropy = document.getElementById('tagOutputEntropy');
+
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0,10).replace(/-/g, '');
+            const timeStr = now.toTimeString().slice(0,8).replace(/:/g, '');
+            const prefix = action === 'encrypt' ? 'FYEO_PROTECTED_' : 'FYEO_RESTORED_';
+            lastFormattedFilename = `${prefix}${dateStr}_${timeStr}.png`;
+
+            revealDecryptedView();
+
+            if (action === 'encrypt') {
+                lastDecryptedAction = false;
+                resultsBadge.textContent = "✓ ENCRYPTED";
+                resultsTitle.textContent = "Visual Encryption Complete";
+                lblInputViewport.textContent = "Original Photo";
+                lblOutputViewport.textContent = "Protected Image";
+                tagOutputEntropy.textContent = "100% ENCRYPTED";
+                btnDownload.textContent = "Download Protected PNG";
+                btnReopenWhatsAppGuide.style.display = "flex";
+
+                // Ephemeral Shield is dormant in Encrypt mode
+                if (ephemeralShieldBar) ephemeralShieldBar.style.display = 'none';
+                stopBurnTimer();
+            } else {
+                lastDecryptedAction = true;
+                resultsBadge.textContent = "✓ RESTORED";
+                resultsTitle.textContent = "Original Photo Restored";
+                lblInputViewport.textContent = "Protected Source";
+                lblOutputViewport.textContent = "Restored Photo";
+                tagOutputEntropy.textContent = "ORIGINAL QUALITY";
+                btnDownload.textContent = "Download Restored Photo";
+                btnReopenWhatsAppGuide.style.display = "none";
+
+                // DEV-116: Ephemeral Decrypt Shield is ACTIVE for Restored media
+                if (ephemeralShieldBar) ephemeralShieldBar.style.display = 'inline-flex';
+                if (burnTimerSelect) {
+                    const secs = parseInt(burnTimerSelect.value, 10) || 0;
+                    if (secs > 0) {
+                        startBurnTimer(secs);
+                    } else {
+                        stopBurnTimer();
+                    }
+                }
+            }
+
+            btnDownload.href = outputObjectUrl;
+            btnDownload.download = lastFormattedFilename;
+
+            // Update instructions text for modal
+            updateShareInstructionsText(seedText);
+
+            resultsDashboard.style.display = 'block';
+            if (window.innerWidth <= 768) {
+                setMobileStep(3);
+            }
+            resultsDashboard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function hideResults() {
+            stopBurnTimer();
+            revealDecryptedView();
+            if (ephemeralShieldBar) ephemeralShieldBar.style.display = 'none';
+            lastDecryptedAction = false;
+
+            resultsDashboard.style.display = 'none';
+            const stepHeader3 = document.getElementById('stepHeader3');
+            if (stepHeader3) stepHeader3.style.display = 'none';
+
+            if (outputObjectUrl) {
+                URL.revokeObjectURL(outputObjectUrl);
+                outputObjectUrl = null;
+            }
+            outputBlob = null;
+        }
+
+        /**
+         * Mobile Viewport Switcher
+         */
+        function setMobileView(view) {
+            const tabs = document.querySelectorAll('.mobile-view-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            const cardInput = document.getElementById('cardViewportInput');
+            const cardOutput = document.getElementById('cardViewportOutput');
+
+            if (view === 'split') {
+                tabs[0].classList.add('active');
+                cardInput.classList.remove('mobile-hidden');
+                cardOutput.classList.remove('mobile-hidden');
+            } else if (view === 'input') {
+                tabs[1].classList.add('active');
+                cardInput.classList.remove('mobile-hidden');
+                cardOutput.classList.add('mobile-hidden');
+            } else if (view === 'output') {
+                tabs[2].classList.add('active');
+                cardInput.classList.add('mobile-hidden');
+                cardOutput.classList.remove('mobile-hidden');
+            }
+        }
+
+        /**
+         * Copy Image to System Clipboard (FYEO-004)
+         */
+        async function copyImageToClipboard() {
+            if (!outputBlob) {
+                showToast("No output image ready to copy.", "warning");
+                return;
+            }
+
+            try {
+                // ClipboardItem API requires image/png
+                if (navigator.clipboard && navigator.clipboard.write && window.ClipboardItem) {
+                    const item = new ClipboardItem({ 'image/png': outputBlob });
+                    await navigator.clipboard.write([item]);
+                    showToast("PNG copied to clipboard! Ready to paste into chat.", "success");
+                } else {
+                    throw new Error("ClipboardItem not supported in this browser");
+                }
+            } catch (err) {
+                console.warn("Clipboard copy fallback triggered:", err);
+                showToast("Direct image clipboard not supported. Use the Download button.", "warning");
+                // Highlight download button
+                btnDownload.style.transform = "scale(1.05)";
+                setTimeout(() => { btnDownload.style.transform = ""; }, 400);
+            }
+        }
+
+        /**
+         * WhatsApp Modal Management (FYEO-002 / FYEO-009)
+         */
+        function openWhatsAppModal(seedText) {
+            const pw = seedText || seedInput.value.trim();
+            if (pw) {
+                updateShareInstructionsText(pw);
+                const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+                currentDecryptUrl = origin + '/#mode=unlock&key=' + encodeURIComponent(pw);
+            }
+            whatsappModal.classList.add('active');
+        }
+
+        function closeWhatsAppModal() {
+            whatsappModal.classList.remove('active');
+            const chkDontShow = document.getElementById('chkDontShowAgain');
+            if (chkDontShow && chkDontShow.checked) {
+                localStorage.setItem(DISMISS_WA_KEY, 'true');
+            }
+        }
+
+        function updateShareInstructionsText(seedText) {
+            const pw = seedText || seedInput.value.trim() || '[YOUR_PASSWORD]';
+            const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+            const decryptUrl = origin + '/#mode=unlock&key=' + encodeURIComponent(pw);
+            currentDecryptUrl = decryptUrl;
+            const instructions = `Hey, I sent you an encrypted photo. Open this 1-click decrypt link: ${decryptUrl} or enter password "${pw}" at ${origin}/#unlock`;
+            document.getElementById('shareInstructionsText').textContent = instructions;
+        }
+
+        async function copy1ClickLink() {
+            const seedText = seedInput.value.trim();
+            const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+            const decryptUrl = currentDecryptUrl || (origin + '/#mode=unlock' + (seedText ? '&key=' + encodeURIComponent(seedText) : ''));
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(decryptUrl);
+                    showToast("1-Click Decrypt Link copied! Recipient can unlock without typing password.", "success");
+                } else {
+                    fallbackCopyText(decryptUrl, "1-Click Decrypt Link copied! Recipient can unlock without typing password.");
+                }
+            } catch (err) {
+                fallbackCopyText(decryptUrl, "1-Click Decrypt Link copied! Recipient can unlock without typing password.");
+            }
+        }
+
+        async function copyShareInstructions() {
+            const text = document.getElementById('shareInstructionsText').textContent;
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                    showToast("Sharing instructions copied to clipboard!", "success");
+                } else {
+                    fallbackCopyText(text);
+                }
+            } catch (err) {
+                fallbackCopyText(text);
+            }
+        }
+
+        function toggleQrCodeDisplay() {
+            const qrWrapper = document.getElementById('qrCodeWrapper');
+            const qrcodeBox = document.getElementById('qrcodeBox');
+            const btnToggle = document.getElementById('btnToggleQrCode');
+            if (!qrWrapper || !qrcodeBox) return;
+
+            const isHidden = qrWrapper.style.display === 'none' || qrWrapper.style.display === '';
+            if (isHidden) {
+                // Clear any previous code
+                qrcodeBox.innerHTML = '';
+                const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+                const targetUrl = currentDecryptUrl || (origin + '/#unlock');
+
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(qrcodeBox, {
+                        text: targetUrl,
+                        width: 180,
+                        height: 180,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                    qrWrapper.style.display = 'flex';
+                    if (btnToggle) btnToggle.textContent = '✕ Hide Air-Gapped QR Key';
+                    showToast("Air-gapped QR key ready. Point recipient camera to scan.", "info");
+                } else {
+                    showToast("QR code library not loaded.", "error");
+                }
+            } else {
+                qrWrapper.style.display = 'none';
+                qrcodeBox.innerHTML = '';
+                if (btnToggle) btnToggle.textContent = '📱 Show Air-Gapped QR Key';
+            }
+        }
+
+        function fallbackCopyText(text, successMsg) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg || "Sharing instructions copied to clipboard!", "success");
+            } catch (err) {
+                showToast("Please manually copy the highlighted text.", "info");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        /**
+         * Zero-Storage Secure Camera Engine (FYEO-010)
+         */
+        async function openSecureCamera() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast("Camera access is not supported by your browser.", "error");
+                return;
+            }
+
+            try {
+                await startCameraStream(currentFacingMode);
+                const cameraModal = document.getElementById('cameraModal');
+                if (cameraModal) {
+                    cameraModal.classList.add('active');
+                }
+            } catch (err) {
+                console.error("Camera access error:", err);
+                showToast("Camera access denied or camera device unavailable.", "error");
+            }
+        }
+
+        async function startCameraStream(facing) {
+            stopCameraStream();
+
+            let constraints = {
+                video: {
+                    facingMode: facing ? { ideal: facing } : 'environment',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                audio: false
+            };
+
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (e) {
+                console.warn(`Could not open camera with facingMode=${facing}, falling back to generic video:`, e);
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            }
+
+            const video = document.getElementById('cameraVideo');
+            if (video && cameraStream) {
+                video.srcObject = cameraStream;
+                try {
+                    await video.play();
+                } catch (playErr) {
+                    console.warn("Autoplay was prevented:", playErr);
+                }
+            }
+        }
+
+        function stopCameraStream() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => {
+                    try {
+                        track.stop();
+                    } catch (e) {
+                        console.warn("Track stop error:", e);
+                    }
+                });
+                cameraStream = null;
+            }
+            const video = document.getElementById('cameraVideo');
+            if (video) {
+                video.srcObject = null;
+            }
+        }
+
+        function closeCameraModal() {
+            stopCameraStream();
+            const cameraModal = document.getElementById('cameraModal');
+            if (cameraModal) {
+                cameraModal.classList.remove('active');
+            }
+        }
+
+        async function flipCamera() {
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            try {
+                await startCameraStream(currentFacingMode);
+                showToast(`Switched to ${currentFacingMode === 'environment' ? 'Rear' : 'Front'} Camera sensor.`, "info");
+            } catch (err) {
+                showToast("Could not switch camera sensor.", "warning");
+            }
+        }
+
+        function captureSecretPhoto() {
+            const video = document.getElementById('cameraVideo');
+            if (!video || !cameraStream) {
+                showToast("No active camera stream to capture.", "error");
+                return;
+            }
+
+            const width = video.videoWidth || 640;
+            const height = video.videoHeight || 480;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    showToast("Failed to capture image frame from video.", "error");
+                    return;
+                }
+
+                const syntheticFile = new File([blob], 'fyeo-secure-snap.png', {
+                    type: 'image/png',
+                    lastModified: Date.now()
+                });
+
+                // Immediately stop camera stream and close modal so camera LED shuts off
+                closeCameraModal();
+
+                // Pass directly into memory pipeline
+                handleFileSelection(syntheticFile);
+
+                showToast("Photo captured directly into memory! Zero-storage secured.", "success");
+            }, 'image/png');
+        }
+
+        /**
+         * Modern Animated Toast Engine
+         */
+        function showToast(message, type = 'info', durationMs = 4500) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+
+            let iconChar = 'ℹ️';
+            if (type === 'success') iconChar = '✓';
+            if (type === 'error') iconChar = '✕';
+            if (type === 'warning') iconChar = '⚠️';
+
+            toast.innerHTML = `
+                <span class="toast-icon">${iconChar}</span>
+                <div class="toast-body">${escapeHtml(message)}</div>
+                <button type="button" class="toast-close" aria-label="Dismiss">✕</button>
+            `;
+
+            const closeBtn = toast.querySelector('.toast-close');
+            const removeToast = () => {
+                toast.classList.add('removing');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 250);
+            };
+
+            closeBtn.addEventListener('click', removeToast);
+
+            container.appendChild(toast);
+
+            setTimeout(removeToast, durationMs);
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+    <!-- ==========================================================================
+         Responsive disclosure state
+         The engine explanation is supplementary, not a prerequisite. It ships
+         expanded (desktop) and collapses on phones so the upload action leads.
+         A native <details> keeps this keyboard- and screen-reader-accessible
+         with no ARIA, and the matchMedia listener keeps it correct on resize.
+         ========================================================================== -->
+    <script>
+        (function () {
+            var details = document.getElementById('engineDetails');
+            if (!details) { return; }
+
+            var mobile = window.matchMedia('(max-width: 768px)');
+
+            var sync = function () {
+                /* Force the correct state for the current breakpoint rather than
+                   only closing on the way down. The summary is display:none on
+                   desktop, so a details left closed after a rotate would hide its
+                   content with no visible way to reopen it. This fires only when
+                   the breakpoint is actually crossed, so manually expanding the
+                   panel on a phone still works until then. */
+                details.open = !mobile.matches;
+            };
+
+            sync();
+            if (mobile.addEventListener) {
+                mobile.addEventListener('change', sync);
+            } else if (mobile.addListener) {
+                mobile.addListener(sync);
+            }
+        })();
     </script>
 </body>
 </html>
