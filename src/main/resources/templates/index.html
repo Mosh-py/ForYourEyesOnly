@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F.Y.E.O | Zero-Knowledge Visual Encryption</title>
+    <title>F.Y.E.O | The Disappearing Photo Shield for Messaging & Chat Apps</title>
 
     <meta name="theme-color" content="#0b0f19">
     <link rel="manifest" href="/manifest.json">
@@ -28,14 +28,17 @@
                 <span id="protocolStatusText">SYSTEM READY · ENCRYPT MODE</span>
             </div>
             <h1 class="app-title">F.Y.E.O</h1>
-            <p class="app-subtitle">Private Visual Encryption & In-Memory Photo Protection</p>
+            <p class="app-subtitle">The Disappearing Photo Shield for Chat Apps · WhatsApp, Telegram, Signal, Slack & Email</p>
         </header>
 
         <!-- Main Card Interface -->
-        <main class="main-card">
+        <main class="main-card" id="mainCard">
             
-            <!-- Top Toolbar for Guide -->
+            <!-- Top Toolbar for Guide & Story Link -->
             <div class="top-toolbar">
+                <a href="#whyFyeo" class="story-link-pill">
+                    <span>🛡️ Why Chat Photos Leak ↓</span>
+                </a>
                 <button type="button" class="guide-toggle-btn" id="btnToggleManual" aria-expanded="false" aria-controls="manualPanel">
                     How It Works <span id="manualCaret">▼</span>
                 </button>
@@ -44,28 +47,29 @@
             <!-- Expandable Manual Panel -->
             <section class="manual-panel" id="manualPanel">
                 <div class="manual-header">
-                    <span class="manual-title">Privacy Guide & Instructions</span>
-                    <span class="format-badge">In-Memory Security</span>
+                    <span class="manual-title">Privacy Guide & Quick Start</span>
+                    <span class="format-badge">Zero-Knowledge · In-Memory</span>
                 </div>
                 <div class="manual-grid">
                     <div class="manual-col">
-                        <h4>Lock Photo (Encrypt)</h4>
+                        <h4>Lock Sensitive Photo (Encrypt)</h4>
                         <ol>
-                            <li>Select or drop any photo (JPG, PNG, WebP).</li>
-                            <li>Enter a private password.</li>
-                            <li>Click <strong>Encrypt & Protect</strong>.</li>
-                            <li>Save the protected PNG file or copy the 1-click link.</li>
-                            <li>Share via WhatsApp as a <strong>DOCUMENT</strong> to prevent lossy compression.</li>
+                            <li>Select or snap any photo (ID card, passport, sensitive document).</li>
+                            <li>Set your private password or generate a 1-click link.</li>
+                            <li>Click <strong>Encrypt & Protect</strong> to scramble into visual noise.</li>
+                            <li>Share via your chat app (WhatsApp, Telegram, Slack, Signal) as a <strong>DOCUMENT / FILE</strong> so compression won't touch it.</li>
+                            <li><strong>Safe Long-Term Storage:</strong> The scrambled image is harmless static noise—completely safe to leave open in your browser tabs or save on your device indefinitely.</li>
+                            <li>Nothing is ever saved to your phone gallery or uploaded to a server.</li>
                         </ol>
                     </div>
                     <div class="manual-col">
                         <h4>Unlock Photo (Decrypt)</h4>
                         <ol>
                             <li>Switch to the <strong>Unlock Image</strong> tab.</li>
-                            <li>Drop the received scrambled PNG photo.</li>
-                            <li>Enter the exact password (or open the 1-click link).</li>
+                            <li>Drop the scrambled PNG photo.</li>
+                            <li>Enter the password (or open via 1-click link).</li>
                             <li>Click <strong>Restore Original</strong>.</li>
-                            <li>Your original photo is restored purely in browser memory.</li>
+                            <li>Original photo restores in RAM with auto-blur protection.</li>
                         </ol>
                     </div>
                 </div>
@@ -102,7 +106,7 @@
             <!-- Mode Context Banner -->
             <div class="mode-banner" id="modeBanner">
                 <div class="mode-banner-text">
-                    <span id="modeBannerMsg">Drop a photo to protect its visual content before sharing.</span>
+                    <span id="modeBannerMsg">Drop or snap a sensitive ID or photo to scramble it before sharing.</span>
                 </div>
                 <span class="mode-banner-tag" id="modeBannerTag">ENCRYPT MODE</span>
             </div>
@@ -340,6 +344,12 @@
                     </div>
                 </div>
 
+                <!-- Long-term Safety Stash Reassurance Banner (Shown on Encrypt) -->
+                <div class="scramble-safety-note" id="scrambleSafetyNote" style="display: none;">
+                    <span class="safety-icon">🛡️</span>
+                    <span><strong>100% Safe to Leave Open:</strong> This scrambled image is pure mathematical visual noise. You can leave this tab open in your browser or keep the saved file indefinitely—shoulder-surfers, snoops, and cloud AI scanners see zero data.</span>
+                </div>
+
                 <!-- Action Toolbar -->
                 <div class="results-actions-grid">
                     <a id="btnDownload" class="btn-action-sec btn-download-highlight" download="FYEO_SCRAMBLED.png">
@@ -355,16 +365,37 @@
                     <button type="button" class="btn-action-sec" id="btnOpenQrDirect" style="border-color: var(--mode-accent); color: var(--mode-accent);">
                         📱 Show Air-Gapped QR Key
                     </button>
-                    <!-- Extra Quick-Launch WhatsApp Guide Trigger for Lock Mode -->
+                    <!-- Extra Quick-Launch File Sharing Guide Trigger for Lock Mode -->
                     <button type="button" class="btn-guide-pill" id="btnReopenWhatsAppGuide">
-                        <span>WhatsApp Sharing Reminder: Send as Document ➔</span>
+                        <span>Sharing Guide: Send as File / Document ➔</span>
                     </button>
                 </div>
-            </section>
 
+                <!-- Recipient Viral Conversion Box (Shown when Decrypt/Restore succeeds) -->
+                <div class="recipient-viral-card" id="recipientViralCard" style="display: none;">
+                    <div class="recipient-viral-inner">
+                        <div class="recipient-viral-text">
+                            <span class="viral-tag">🔒 ZERO-KNOWLEDGE PRIVACY</span>
+                            <h4 class="viral-heading">Need to send a private ID, card, or photo?</h4>
+                            <p class="viral-subtext">Scramble sensitive documents directly in browser memory before sending on WhatsApp, Telegram, Signal, or Slack. 100% free, no account needed.</p>
+                        </div>
+                        <button type="button" class="btn-viral-action" id="btnViralProtectOwn">
+                            <span>Protect Your Own Photo Free ➔</span>
+                        </button>
+                    </div>
+                </div>
         </main>
 
-        <!-- WhatsApp Document Mode Guardrail Modal -->
+        <!-- Visual Story Bridge & Scroll Prompt (Eliminating the False Bottom) -->
+        <div class="story-bridge-cue">
+            <a href="#whyFyeo" class="story-bridge-pill">
+                <span class="bridge-pulse"></span>
+                <span>The Story: Why regular photos leak & how F.Y.E.O breaks the chain</span>
+                <span class="bridge-arrow">↓</span>
+            </a>
+        </div>
+
+        <!-- Document / File Mode Guardrail Modal -->
         <div class="modal-overlay" id="whatsappModal" role="dialog" aria-modal="true" aria-labelledby="waModalTitle">
             <div class="modal-card">
                 <button type="button" class="modal-close-btn" id="btnCloseWaModal" aria-label="Close dialog">✕</button>
@@ -373,9 +404,9 @@
                     Important Sharing Guide
                 </div>
                 
-                <h2 class="modal-title" id="waModalTitle">Send as a Document on WhatsApp</h2>
+                <h2 class="modal-title" id="waModalTitle">Send as a File or Document</h2>
                 <p class="modal-desc">
-                    WhatsApp automatically recompresses regular photos into lossy JPEGs, which irreversibly alters raw pixels and <strong>prevents decryption</strong>.
+                    Chat apps (WhatsApp, Telegram, Discord, Slack) automatically recompress standard photos into lossy JPEGs, which irreversibly alters raw pixels and <strong>prevents decryption</strong>.
                     Follow these 3 quick steps to send untouched raw pixels:
                 </p>
 
@@ -383,13 +414,13 @@
                     <div class="modal-step-card">
                         <div class="step-icon-wrap">📎</div>
                         <span class="step-number">STEP 1</span>
-                        <span class="step-text">Tap the Paperclip or Plus (+) icon in chat</span>
+                        <span class="step-text">Tap the Paperclip or Plus (+) icon in your chat app</span>
                     </div>
 
                     <div class="modal-step-card" style="border-color: var(--neon-amber);">
                         <div class="step-icon-wrap" style="color: var(--neon-amber);">📄</div>
                         <span class="step-number" style="color: var(--neon-amber);">STEP 2</span>
-                        <span class="step-text">Select <strong>"Document"</strong><span class="step-warn-note">(NOT Gallery/Photo)</span></span>
+                        <span class="step-text">Select <strong>"Document" or "File"</strong><span class="step-warn-note">(NOT Photo / Compressed Gallery)</span></span>
                     </div>
 
                     <div class="modal-step-card">
@@ -485,6 +516,211 @@
             </div>
         </div>
 
+        <!-- Below-the-Fold Narrative, Use Cases & Trust Section -->
+        <section class="trust-narrative-section" id="whyFyeo">
+            
+            <!-- The Story Breakdown: The 3-Step Leak vs FYEO -->
+            <div class="story-walkthrough-card">
+                <div class="story-walkthrough-header">
+                    <span class="story-badge">THE STORY</span>
+                    <h2 class="story-hero-title">"My chat app is end-to-end encrypted. Why is my photo in danger?"</h2>
+                    <p class="story-hero-subtitle">Chat encryption only protects the tunnel while files travel. The real leaks happen <strong>before</strong> you send and <strong>after</strong> they receive—across WhatsApp, Telegram, Signal, Slack, and Discord.</p>
+                </div>
+
+                <div class="story-comparison-grid">
+                    <div class="story-col story-danger-col">
+                        <div class="story-col-header">
+                            <span class="status-indicator danger">✕ THE STANDARD CHAT TRAP</span>
+                        </div>
+                        <ul class="story-step-list">
+                            <li>
+                                <strong>1. Your Camera Roll:</strong>
+                                <span>The second you snap a photo of your NIN or bank card, your phone saves it. iCloud or Google Photos uploads it to train cloud AI and index your private data.</span>
+                            </li>
+                            <li>
+                                <strong>2. App Compression & Cache Leaks:</strong>
+                                <span>Chat apps recompress photos into lossy formats and store unencrypted local thumbnails in shared phone cache directories and cloud chat backups.</span>
+                            </li>
+                            <li>
+                                <strong>3. Permanent Recipient Copy:</strong>
+                                <span>Your private document sits in someone else's gallery forever. If they lose their phone or let someone browse their gallery, your data is exposed.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="story-col story-fyeo-col">
+                        <div class="story-col-header">
+                            <span class="status-indicator safe">✓ HOW F.Y.E.O BREAKS THE CHAIN</span>
+                        </div>
+                        <ul class="story-step-list">
+                            <li>
+                                <strong>1. Zero-Storage Secret Camera:</strong>
+                                <span>Photos are captured directly into volatile browser RAM. Your phone's gallery and cloud backups never see the photo.</span>
+                            </li>
+                            <li>
+                                <strong>2. Visual Noise Scrambling:</strong>
+                                <span>Your document is scrambled into static noise in your browser via Web Workers. Chat servers and eavesdroppers only see random pixels.</span>
+                            </li>
+                            <li>
+                                <strong>3. Auto-Burn & Decrypt Shield:</strong>
+                                <span>The recipient views the photo with a 30s auto-burn timer and tab-switch auto-blur. Once viewed, the memory is wiped to zero.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Return to App Button inside Story Walkthrough -->
+                <div class="story-card-cta-row">
+                    <a href="#mainCard" class="btn-return-app-inline">
+                        <span>🔒 Return to Photo Shield (Lock / Unlock Image) ↑</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 1: The Dangers of Chat Photo Sharing -->
+            <div class="narrative-block">
+                <div class="narrative-header">
+                    <span class="narrative-badge">THE HIDDEN THREAT</span>
+                    <h2 class="narrative-title">Why Sending Sensitive Photos on Messaging Apps Isn't Private</h2>
+                    <p class="narrative-desc">Even with end-to-end encryption, raw photos leave permanent digital traces across chat platforms.</p>
+                </div>
+
+                <div class="threats-grid">
+                    <div class="threat-card">
+                        <div class="threat-icon">🤖</div>
+                        <h3 class="threat-title">Cloud AI Gallery Indexing</h3>
+                        <p class="threat-text">Apple Intelligence and Google Photos automatically upload and scan every photo in your camera roll to index faces, text, and documents.</p>
+                    </div>
+
+                    <div class="threat-card">
+                        <div class="threat-icon">📱</div>
+                        <h3 class="threat-title">Recipient Gallery Permanence</h3>
+                        <p class="threat-text">When you send your ID card or bank card, it sits permanently in the recipient's phone gallery, vulnerable to shoulder surfing, phone loss, or resale.</p>
+                    </div>
+
+                    <div class="threat-card">
+                        <div class="threat-icon">☁️</div>
+                        <h3 class="threat-title">Unencrypted Chat Backups</h3>
+                        <p class="threat-text">Standard cloud backups of chat media (to Google Drive or iCloud) are frequently stored unencrypted or exposed to SIM-swap account takeovers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Everyday Use Cases -->
+            <div class="narrative-block">
+                <div class="narrative-header">
+                    <span class="narrative-badge">BUILT FOR REAL LIFE</span>
+                    <h2 class="narrative-title">What People Protect with F.Y.E.O</h2>
+                    <p class="narrative-desc">Built for anyone who needs to share sensitive physical documents without leaving permanent copies.</p>
+                </div>
+
+                <div class="usecases-grid">
+                    <div class="usecase-card">
+                        <div class="usecase-tag">IDENTITY</div>
+                        <h3 class="usecase-title">🪪 NIN Slips, BVN & National IDs</h3>
+                        <p class="usecase-text">Send your identification to agents, HR, or landlords. They see it once, and it never sits permanently in their phone's photo library.</p>
+                    </div>
+
+                    <div class="usecase-card">
+                        <div class="usecase-tag">FINANCE</div>
+                        <h3 class="usecase-title">💳 Debit Cards & Payment Proofs</h3>
+                        <p class="usecase-text">Share transaction proof or card fronts without exposing sensitive details to indefinite cloud backup storage.</p>
+                    </div>
+
+                    <div class="usecase-card">
+                        <div class="usecase-tag">CONFIDENTIAL</div>
+                        <h3 class="usecase-title">📄 Legal NDAs & Signed Contracts</h3>
+                        <p class="usecase-text">Exchange sensitive contract signatures with an auto-burn timer that wipes memory clean the moment the document is viewed.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: The 4 Privacy Pillars -->
+            <div class="narrative-block">
+                <div class="narrative-header">
+                    <span class="narrative-badge">THE ARCHITECTURE</span>
+                    <h2 class="narrative-title">Four Ironclad Zero-Knowledge Guarantees</h2>
+                </div>
+
+                <div class="pillars-grid">
+                    <div class="pillar-card">
+                        <div class="pillar-number">01</div>
+                        <div class="pillar-content">
+                            <h3 class="pillar-title">100% In-Browser Execution</h3>
+                            <p class="pillar-text">All pixel permutation and Visual AEAD encryption runs in client-side Web Workers on your CPU. Our servers see zero bytes of photos, filenames, or passwords.</p>
+                        </div>
+                    </div>
+
+                    <div class="pillar-card">
+                        <div class="pillar-number">02</div>
+                        <div class="pillar-content">
+                            <h3 class="pillar-title">Zero-Storage Secret Camera</h3>
+                            <p class="pillar-text">Snap sensitive documents directly into volatile browser RAM. The photo is encrypted into static noise before it can ever be saved to your camera roll.</p>
+                        </div>
+                    </div>
+
+                    <div class="pillar-card">
+                        <div class="pillar-number">03</div>
+                        <div class="pillar-content">
+                            <h3 class="pillar-title">Ephemeral Decrypt Shield & Auto-Burn</h3>
+                            <p class="pillar-text">Restored media automatically blurs the instant the recipient switches tabs or apps, and self-destructs after 30 seconds with complete memory zeroization.</p>
+                        </div>
+                    </div>
+
+                    <div class="pillar-card">
+                        <div class="pillar-number">04</div>
+                        <div class="pillar-content">
+                            <h3 class="pillar-title">Safe Long-Term Browser Stash</h3>
+                            <p class="pillar-text">Leave encrypted tabs open or store scrambled PNGs indefinitely. Without your password, pixels are mathematically random noise—impenetrable to shoulder-surfers and cloud AI.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Quick FAQ -->
+            <div class="narrative-block">
+                <div class="narrative-header">
+                    <span class="narrative-badge">FREQUENTLY ASKED</span>
+                    <h2 class="narrative-title">Common Questions</h2>
+                </div>
+
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h4 class="faq-question">Can anyone decrypt my image without the password?</h4>
+                        <p class="faq-answer">No. FYEO uses PBKDF2-HMAC-SHA256 with 100,000 rounds and NIST P-256 asymmetric ECDH. Without the exact passphrase or private device key, the image is mathematically indistinguishable from random visual noise.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4 class="faq-question">Can I leave the scrambled image open in my browser or saved on my device?</h4>
+                        <p class="faq-answer"><strong>Yes, it is 100% safe.</strong> Once scrambled, the image is pure high-entropy visual static. To anyone glancing at your screen, roommates, or cloud AI indexing tools (like Google Photos or Apple Intelligence), it is just meaningless random pixels. You can leave the tab open in your browser or keep the file in your downloads folder for months—nobody can glean a single pixel of your document until you enter the secret password to decrypt it.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4 class="faq-question">Why must I send as a "Document" or "File"?</h4>
+                        <p class="faq-answer">When you send a standard photo on WhatsApp, Telegram, Discord, or Slack, the app recompresses it into a lossy JPEG to save bandwidth, permanently altering pixel values and breaking cryptographic integrity. Sending as a "Document" or "File" transmits the raw PNG bitstream with 100% pixel fidelity.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4 class="faq-question">Is F.Y.E.O free and open source?</h4>
+                        <p class="faq-answer">Yes, 100% free with no accounts, no cookies, no third-party tracking, and no paywalls. The cryptographic specification and source code are open on GitHub.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Narrative Bottom Return-to-App Call to Action -->
+            <div class="narrative-bottom-cta">
+                <div class="bottom-cta-content">
+                    <span class="bottom-cta-badge">READY TO PROTECT A PHOTO?</span>
+                    <h3 class="bottom-cta-title">Everything runs in your browser RAM.</h3>
+                    <p class="bottom-cta-desc">No accounts, no phone gallery leaks, and zero server storage. Switch to the photo shield to start now.</p>
+                    <a href="#mainCard" class="btn-return-app-main">
+                        <span>🔒 Open Photo Shield (Back to Tool ↑)</span>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+
         <!-- Dev & Support Footer -->
         <footer class="app-footer">
             <span class="footer-tag">> CLIENT IN-MEMORY PROTOCOL // SECURE CONNECTION</span>
@@ -557,6 +793,9 @@
         const btnBurnNow = document.getElementById('btnBurnNow');
         const shieldBlurOverlay = document.getElementById('shieldBlurOverlay');
         const btnShieldReveal = document.getElementById('btnShieldReveal');
+        const recipientViralCard = document.getElementById('recipientViralCard');
+        const btnViralProtectOwn = document.getElementById('btnViralProtectOwn');
+        const scrambleSafetyNote = document.getElementById('scrambleSafetyNote');
 
         /**
          * Web Worker Initialization (FYEO-005)
@@ -1182,6 +1421,20 @@
                 showToast("Workspace reset. Ready for next file.", "info");
             });
 
+            if (btnViralProtectOwn) {
+                btnViralProtectOwn.addEventListener('click', () => {
+                    clearFileSelection();
+                    hideResults();
+                    seedInput.value = '';
+                    isKeyPreloaded = false;
+                    preloadedKeyValue = '';
+                    hidePreloadedKeyBadge();
+                    switchMode('lock');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    showToast("Switched to Lock Mode. Drop your photo to encrypt.", "info");
+                });
+            }
+
             // WhatsApp Modal Listeners (FYEO-002 / FYEO-009)
             document.getElementById('btnCloseWaModal').addEventListener('click', closeWhatsAppModal);
             document.getElementById('btnDismissWaModal').addEventListener('click', () => {
@@ -1474,7 +1727,7 @@
                     if (err.code === 'AUTHENTICATION_FAILED') {
                         showToast("Wrong Password or Tampered Image: The password does not match or the image pixels have been altered.", "error");
                     } else if (err.code === 'CORRUPTED_OR_COMPRESSED_IMAGE' || err.code === 'CORRUPTED_PNG_CRC_MISMATCH') {
-                        showToast("Compression Damage / Metadata Missing: Image was compressed (e.g. by WhatsApp photo sharing) or metadata was stripped. Send as an uncompressed document.", "error");
+                        showToast("Compression Damage / Metadata Missing: Image was compressed (e.g. by chat app photo sharing) or metadata was stripped. Send as an uncompressed document or file.", "error");
                     } else if (err.code === 'IMAGE_DIMENSIONS_MISMATCH_OR_CROPPED') {
                         showToast("Image Dimensions Mismatch: The image has been cropped or resized.", "error");
                     } else {
@@ -1522,7 +1775,7 @@
                     if (response.status === 400 || errorMessage.includes("AUTHENTICATION_FAILED")) {
                         throw new Error("Wrong Password or Tampered Image: The password does not match or the image pixels have been altered.");
                     } else if (response.status === 422 || errorMessage.includes("CORRUPTED_OR_COMPRESSED_IMAGE")) {
-                        throw new Error("Compression Damage / Metadata Missing: Image was compressed (e.g. by WhatsApp photo sharing) or metadata was stripped. Send as an uncompressed document.");
+                        throw new Error("Compression Damage / Metadata Missing: Image was compressed (e.g. by chat app photo sharing) or metadata was stripped. Send as an uncompressed document or file.");
                     }
                     throw new Error(errorMessage);
                 }
@@ -1729,6 +1982,8 @@
                 tagOutputEntropy.textContent = "100% ENCRYPTED";
                 btnDownload.textContent = "Download Protected PNG";
                 btnReopenWhatsAppGuide.style.display = "flex";
+                if (recipientViralCard) recipientViralCard.style.display = 'none';
+                if (scrambleSafetyNote) scrambleSafetyNote.style.display = 'flex';
 
                 // Ephemeral Shield is dormant in Encrypt mode
                 if (ephemeralShieldBar) ephemeralShieldBar.style.display = 'none';
@@ -1742,6 +1997,8 @@
                 tagOutputEntropy.textContent = "ORIGINAL QUALITY";
                 btnDownload.textContent = "Download Restored Photo";
                 btnReopenWhatsAppGuide.style.display = "none";
+                if (recipientViralCard) recipientViralCard.style.display = 'block';
+                if (scrambleSafetyNote) scrambleSafetyNote.style.display = 'none';
 
                 // DEV-116: Ephemeral Decrypt Shield is ACTIVE for Restored media
                 if (ephemeralShieldBar) ephemeralShieldBar.style.display = 'inline-flex';
@@ -1761,6 +2018,7 @@
             // Update instructions text for modal
             updateShareInstructionsText(seedText);
 
+            resultsDashboard.classList.remove('collapsed');
             resultsDashboard.style.display = 'block';
             if (window.innerWidth <= 768) {
                 setMobileStep(3);
@@ -1772,8 +2030,11 @@
             stopBurnTimer();
             revealDecryptedView();
             if (ephemeralShieldBar) ephemeralShieldBar.style.display = 'none';
+            if (recipientViralCard) recipientViralCard.style.display = 'none';
+            if (scrambleSafetyNote) scrambleSafetyNote.style.display = 'none';
             lastDecryptedAction = false;
 
+            resultsDashboard.classList.add('collapsed');
             resultsDashboard.style.display = 'none';
             const stepHeader3 = document.getElementById('stepHeader3');
             if (stepHeader3) stepHeader3.style.display = 'none';
@@ -2150,6 +2411,26 @@
                 mobile.addListener(sync);
             }
         })();
+
+        // Scroll Listener for Floating Back-to-App Button
+        (function() {
+            const floatingBtn = document.getElementById('floatingBackToTop');
+            if (floatingBtn) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 400) {
+                        floatingBtn.classList.add('visible');
+                    } else {
+                        floatingBtn.classList.remove('visible');
+                    }
+                }, { passive: true });
+            }
+        })();
     </script>
+
+    <!-- Floating Return to App Button (appears when scrolled down) -->
+    <a href="#mainCard" id="floatingBackToTop" class="floating-return-btn" aria-label="Return to photo shield">
+        <span class="floating-btn-icon">🔒</span>
+        <span class="floating-btn-text">Back to Tool ↑</span>
+    </a>
 </body>
 </html>
