@@ -435,7 +435,7 @@
                         <span>RECIPIENT INSTRUCTIONS</span>
                         <span style="color: var(--mode-accent);">QUICK COPY</span>
                     </div>
-                    <div class="share-copy-text" id="shareInstructionsText">Hey, I sent you an encrypted photo. Open https://foryoureyesonly-m4th.onrender.com/#unlock and enter password: ...</div>
+                    <div class="share-copy-text" id="shareInstructionsText">Hey, I sent you an encrypted photo. Open https://foryoureyesonly.rumptycloud.app/#unlock and enter password: ...</div>
                     <div class="share-actions-group">
                         <button type="button" class="btn-copy-1click" id="btnCopy1ClickLink">
                             Copy 1-Click Decrypt Link
@@ -2105,7 +2105,7 @@
             const pw = seedText || seedInput.value.trim();
             if (pw) {
                 updateShareInstructionsText(pw);
-                const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+                const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly.rumptycloud.app';
                 currentDecryptUrl = origin + '/#mode=unlock&key=' + encodeURIComponent(pw);
             }
             whatsappModal.classList.add('active');
@@ -2121,7 +2121,7 @@
 
         function updateShareInstructionsText(seedText) {
             const pw = seedText || seedInput.value.trim() || '[YOUR_PASSWORD]';
-            const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+            const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly.rumptycloud.app';
             const decryptUrl = origin + '/#mode=unlock&key=' + encodeURIComponent(pw);
             currentDecryptUrl = decryptUrl;
             const instructions = `Hey, I sent you an encrypted photo. Open this 1-click decrypt link: ${decryptUrl} or enter password "${pw}" at ${origin}/#unlock`;
@@ -2130,7 +2130,7 @@
 
         async function copy1ClickLink() {
             const seedText = seedInput.value.trim();
-            const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+            const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly.rumptycloud.app';
             const decryptUrl = currentDecryptUrl || (origin + '/#mode=unlock' + (seedText ? '&key=' + encodeURIComponent(seedText) : ''));
             try {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -2168,7 +2168,7 @@
             if (isHidden) {
                 // Clear any previous code
                 qrcodeBox.innerHTML = '';
-                const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly-m4th.onrender.com';
+                const origin = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'https://foryoureyesonly.rumptycloud.app';
                 const targetUrl = currentDecryptUrl || (origin + '/#unlock');
 
                 if (typeof QRCode !== 'undefined') {

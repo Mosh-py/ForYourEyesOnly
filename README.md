@@ -2,7 +2,7 @@
 # F.Y.E.O (For Your Eyes Only) 👁️🔒
 
 > **Status:** Live & Deployed  
-> **Demo:** [https://foryoureyesonly-m4th.onrender.com/](https://foryoureyesonly-m4th.onrender.com/)
+> **Demo:** [https://foryoureyesonly.rumptycloud.app/](https://foryoureyesonly.rumptycloud.app/)
 
 ## 📡 Overview
 **F.Y.E.O** is a visual cryptography engine designed to explore the relationship between **Image Entropy**, **Compression Algorithms**, and **Data Privacy**.
@@ -55,7 +55,7 @@ image fails authentication instead of silently producing garbage pixels.
 ## 💻 Tech Stack
 * **Backend:** Java 21, Spring Boot (Web, DevTools).
 * **Frontend:** Thymeleaf, Vanilla JavaScript (FormData API), CSS (Dark Mode/Terminal UI).
-* **Deployment:** Docker, Render Cloud Platform.
+* **Deployment:** Docker, RumptyCloud Platform.
 * **Cryptography:** Custom **Visual AEAD** — PBKDF2-HMAC-SHA256 (100k rounds), HKDF subkey expansion, HMAC-SHA256 authentication tag with constant-time verification.
 
 ---

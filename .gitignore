@@ -38,4 +38,11 @@ docs/
 .metadata/
 __pycache__/
 *.py
+*.mp4
+*.wav
+fyeo_*preview*.png
+fyeo_caption_preview*.png
+fyeo_portrait_caption_*.png
+fyeo_video_thumbnail_*.png
+mobile_fyeo_preview.png
 
